@@ -1,0 +1,5 @@
+<% Location.all.each do |location| %>
+    <img src="<%= location.image_url %>" />
+    <div><%= location.name %></div>
+    <div><%= location.description %></div>
+<% end %>
