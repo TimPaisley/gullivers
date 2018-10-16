@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore bundled Elm javascript
+/app/assets/javascripts/bundle.js
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
@@ -29,3 +32,4 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+elm/elm-stuff

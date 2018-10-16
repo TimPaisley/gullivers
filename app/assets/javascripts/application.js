@@ -12,4 +12,4 @@
 //
 //= require rails-ujs
 //= require activestorage
-//= require_tree .
+// turned off require_tree .
