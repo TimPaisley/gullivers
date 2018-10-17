@@ -33,3 +33,5 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 elm/elm-stuff
+elm/node_modules
+.DS_Store

@@ -1,0 +1,3 @@
+{
+    "elm.formatCommand": "./elm/node_modules/.bin/elm-format"
+}
