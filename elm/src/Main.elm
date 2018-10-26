@@ -28,8 +28,8 @@ type alias Flags =
 
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags _ key =
-    ( { flags = flags, locations = NotAsked, screen = Home, key = key }
+init flags url key =
+    ( { flags = flags, locations = NotAsked, screen = screenFromUrl url, key = key }
     , locationsRequest flags.csrfToken
         |> RemoteData.sendRequest
         |> Cmd.map UpdateLocations
