@@ -7,6 +7,7 @@ import Html.Attributes exposing (class, href, id, src)
 import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Decode exposing (Decoder)
+import Json.Encode as Encode
 import RemoteData exposing (RemoteData(..), WebData)
 import Url exposing (Url)
 
@@ -20,17 +21,27 @@ type alias Model =
     , locations : WebData (List Location)
     , screen : Screen
     , key : Nav.Key
+    , visitResult : WebData ()
     }
 
 
 type alias Flags =
-    { csrfToken : String }
+    { token : Token }
+
+
+type alias Token =
+    String
 
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( { flags = flags, locations = NotAsked, screen = screenFromUrl url, key = key }
-    , locationsRequest flags.csrfToken
+    ( { flags = flags
+      , locations = NotAsked
+      , screen = screenFromUrl url
+      , key = key
+      , visitResult = NotAsked
+      }
+    , locationsRequest flags.token
         |> RemoteData.sendRequest
         |> Cmd.map UpdateLocations
     )
@@ -42,7 +53,8 @@ type Screen
 
 
 type alias Location =
-    { name : String
+    { id : Int
+    , name : String
     , description : String
     , imageUrl : String
     , reward : Int
@@ -66,6 +78,8 @@ type Msg
     | ChangeScreen Screen
     | RequestUrl Browser.UrlRequest
     | ChangeUrl Url
+    | VisitLocation Location
+    | UpdateVisitResults (WebData ())
 
 
 screenFromUrl : Url -> Screen
@@ -116,8 +130,18 @@ update msg model =
             in
             ( { model | screen = screenFromUrl url }, Cmd.none )
 
+        VisitLocation location ->
+            ( model
+            , visitLocationRequest model.flags.token location
+                |> RemoteData.sendRequest
+                |> Cmd.map UpdateVisitResults
+            )
 
-locationsRequest : String -> Http.Request (List Location)
+        UpdateVisitResults result ->
+            ( { model | visitResult = result }, Cmd.none )
+
+
+locationsRequest : Token -> Http.Request (List Location)
 locationsRequest token =
     Http.request
         { method = "GET"
@@ -137,15 +161,17 @@ decodeLocations : Decoder (List Location)
 decodeLocations =
     let
         decodeLocation =
-            Decode.map5 makeLocation
+            Decode.map6 makeLocation
+                (Decode.field "id" Decode.int)
                 (Decode.field "name" Decode.string)
                 (Decode.field "description" Decode.string)
                 (Decode.field "image_url" Decode.string)
                 (Decode.field "reward" Decode.int)
                 (Decode.field "geometry" decodeGeometry)
 
-        makeLocation name description imageUrl reward latLng =
-            { name = name
+        makeLocation id name description imageUrl reward latLng =
+            { id = id
+            , name = name
             , description = description
             , imageUrl = imageUrl
             , reward = reward
@@ -187,6 +213,27 @@ maybeToDecoder error maybe =
             Decode.fail error
 
 
+visitLocationRequest : Token -> Location -> Http.Request ()
+visitLocationRequest token location =
+    Http.request
+        { method = "POST"
+        , headers =
+            [ Http.header "X-CSRF-Token" token
+            , Http.header "Accept" "application/json"
+            ]
+        , url = "/visits"
+        , body = Http.jsonBody <| encodeLocation location
+        , expect = Http.expectJson <| Decode.succeed ()
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+
+encodeLocation : Location -> Encode.Value
+encodeLocation location =
+    Encode.object [ ( "location_id", Encode.int location.id ) ]
+
+
 
 ---- VIEW ----
 
@@ -222,8 +269,15 @@ renderLocationsScreen : Model -> Html Msg
 renderLocationsScreen model =
     div []
         [ h1 [] [ text "All Locations" ]
+        , renderVisitStatus model.visitResult
+        , a [ href "/" ] [ text "Home" ]
         , renderLocations model.locations
         ]
+
+
+renderVisitStatus : WebData () -> Html Msg
+renderVisitStatus result =
+    div [] [ text <| Debug.toString result ]
 
 
 renderLocations : WebData (List Location) -> Html Msg
@@ -244,7 +298,7 @@ renderLocations remoteLocations =
 
 locationCard : Location -> Html Msg
 locationCard location =
-    div [ class "card" ]
+    div [ class "card", onClick (VisitLocation location) ]
         [ img [ src location.imageUrl ] []
         , div [ class "content" ]
             [ h2 [] [ text location.name ]
