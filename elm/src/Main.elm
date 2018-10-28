@@ -367,7 +367,7 @@ locationCard location =
         [ img [ src location.imageUrl ] []
         , div [ class "content" ]
             [ h2 [] [ text location.name ]
-            , p [] [ text location.description ]
+            , p [] [ text "Undiscovered" ]
             ]
         , div [ class "value" ] [ text <| String.fromInt location.reward ]
         ]
