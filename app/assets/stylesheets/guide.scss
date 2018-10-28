@@ -8,6 +8,10 @@ body {
     padding: 0;
 }
 
+a {
+    text-decoration: none;
+}
+
 h1 {
     text-decoration: none;
 }
@@ -16,7 +20,66 @@ h1 {
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.header {
     padding: 0 20px;
+
+    h1 {
+        text-align: center;
+        margin-bottom: 0;
+        color: #FFCC00;
+    }
+}
+
+.panel {
+    background-color: #333;
+    color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+
+    cursor: pointer;
+
+    svg {
+       opacity: 1;
+       min-height: 150px;
+    }
+
+    &.invert {
+        background-color: transparent;
+        color: #333;
+    }
+}
+
+.profile {
+    .section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        h1, h2, h3 {
+            margin: 0 0 20px 0;
+            color: #FFCC00;
+        }
+
+        &.left {
+            margin-right: 10px;
+            padding: 20px 0;
+
+            img {
+                border-radius: 50%;
+            }
+        }
+    
+        &.right {
+            margin-left: 10px;
+            flex: 2;
+        }
+    }
 }
 
 .card {
@@ -31,6 +94,7 @@ h1 {
     
     img {
         align-self: center;
+        height: 100px;
     }
     
     .content {

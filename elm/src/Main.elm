@@ -2,10 +2,11 @@ module Main exposing (Location, Model, Msg(..), init, locationCard, main, update
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, div, h1, h2, img, p, text)
-import Html.Attributes exposing (class, href, id, src)
+import Html exposing (Html, a, div, h1, h2, h3, img, p, span, text)
+import Html.Attributes exposing (class, href, id, src, style)
 import Html.Events exposing (onClick)
 import Http
+import Icons exposing (backpackIcon, campfireIcon, compassIcon, mapIcon)
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import RemoteData exposing (RemoteData(..), WebData)
@@ -257,18 +258,82 @@ view model =
         ]
 
 
+renderHeader : Screen -> Html Msg
+renderHeader screen =
+    let
+        content =
+            case screen of
+                Home ->
+                    [ h1 [] [ text "Gulliver's Guide" ] ]
+
+                Locations ->
+                    [ h1 [] [ text "Locations" ] ]
+    in
+    div [ class "header" ] content
+
+
+renderFooter : Html Msg
+renderFooter =
+    div [ class "footer panel" ]
+        [ span
+            [ style "opacity" "0.5" ]
+            [ text "Licence, etc." ]
+        ]
+
+
 renderHomeScreen : Model -> Html Msg
 renderHomeScreen model =
     div []
-        [ h1 [] [ text "Home" ]
-        , a [ href "/locations" ] [ text "Locations" ]
+        [ renderHeader model.screen
+        , renderProfile model
+        , a [ href "/locations" ]
+            [ div [ class "panel" ]
+                [ text "Locations"
+                , compassIcon
+                ]
+            ]
+        , a [ href "/" ]
+            [ div [ class "panel invert" ]
+                [ text "Map"
+                , mapIcon
+                ]
+            ]
+        , a [ href "/" ]
+            [ div [ class "panel" ]
+                [ text "Badges"
+                , backpackIcon
+                ]
+            ]
+        , a [ href "/" ]
+            [ div [ class "panel invert" ]
+                [ text "Settings"
+                , campfireIcon
+                ]
+            ]
+        , renderFooter
+        ]
+
+
+renderProfile : Model -> Html Msg
+renderProfile model =
+    div [ class "profile panel invert" ]
+        [ div [ class "section left" ]
+            [ img [ src "https://via.placeholder.com/100/333333/FFFFFF" ] []
+            ]
+        , div [ class "section right" ]
+            [ span []
+                [ text "Welcome back,"
+                , h2 [] [ text "Development" ]
+                ]
+            , text "Level 1"
+            ]
         ]
 
 
 renderLocationsScreen : Model -> Html Msg
 renderLocationsScreen model =
     div []
-        [ h1 [] [ text "All Locations" ]
+        [ renderHeader model.screen
         , renderVisitStatus model.visitResult
         , a [ href "/" ] [ text "Home" ]
         , renderLocations model.locations
