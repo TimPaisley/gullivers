@@ -32,54 +32,72 @@ h1 {
     }
 }
 
-.panel {
-    background-color: #333;
-    color: white;
-
+#home-screen {
+    height: 100vh;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
+    flex-direction: column;
 
-    cursor: pointer;
+    .home-profile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
 
-    svg {
-       opacity: 1;
-       min-height: 150px;
+        cursor: pointer;
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+    
+            h1, h2, h3 {
+                margin: 0 0 20px 0;
+                color: #FFCC00;
+            }
+    
+            &.left {
+                margin-right: 10px;
+                padding: 20px 0;
+    
+                img {
+                    border-radius: 50%;
+                }
+            }
+        
+            &.right {
+                margin-left: 10px;
+                flex: 2;
+            }
+        }
     }
 
-    &.invert {
-        background-color: transparent;
-        color: #333;
+    .home-news {
+        flex: 1;
+        padding: 0 20px;
+        overflow: auto;
+
+        .news-item {
+            margin-bottom: 30px;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+        }
+
+        .date {
+            opacity: 0.5;
+        }
     }
 }
 
-.profile {
-    .section {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-start;
-
-        h1, h2, h3 {
-            margin: 0 0 20px 0;
-            color: #FFCC00;
-        }
-
-        &.left {
-            margin-right: 10px;
-            padding: 20px 0;
-
-            img {
-                border-radius: 50%;
-            }
-        }
-    
-        &.right {
-            margin-left: 10px;
-            flex: 2;
-        }
-    }
+.action-button {
+    margin: 20px;
+    padding: 30px 20px;
+    background-color: #FFCC00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .card {

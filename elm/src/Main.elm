@@ -53,6 +53,15 @@ type Screen
     | Locations
 
 
+type alias Adventure =
+    { id : Int
+    , name : String
+    , description : String
+    , badge : String
+    , experience : Int
+    }
+
+
 type alias Location =
     { id : Int
     , name : String
@@ -272,51 +281,22 @@ renderHeader screen =
     div [ class "header" ] content
 
 
-renderFooter : Html Msg
-renderFooter =
-    div [ class "footer panel" ]
-        [ span
-            [ style "opacity" "0.5" ]
-            [ text "Licence, etc." ]
-        ]
-
-
 renderHomeScreen : Model -> Html Msg
 renderHomeScreen model =
-    div []
+    div [ id "home-screen" ]
         [ renderHeader model.screen
         , renderProfile model
+        , renderNews
         , a [ href "/locations" ]
-            [ div [ class "panel" ]
-                [ text "Locations"
-                , compassIcon
-                ]
+            [ div [ class "action-button" ]
+                [ text "Go on an Adventure" ]
             ]
-        , a [ href "/" ]
-            [ div [ class "panel invert" ]
-                [ text "Map"
-                , mapIcon
-                ]
-            ]
-        , a [ href "/" ]
-            [ div [ class "panel" ]
-                [ text "Badges"
-                , backpackIcon
-                ]
-            ]
-        , a [ href "/" ]
-            [ div [ class "panel invert" ]
-                [ text "Settings"
-                , campfireIcon
-                ]
-            ]
-        , renderFooter
         ]
 
 
 renderProfile : Model -> Html Msg
 renderProfile model =
-    div [ class "profile panel invert" ]
+    div [ class "home-profile" ]
         [ div [ class "section left" ]
             [ img [ src "https://via.placeholder.com/100/333333/FFFFFF" ] []
             ]
@@ -326,6 +306,23 @@ renderProfile model =
                 , h2 [] [ text "Development" ]
                 ]
             , text "Level 1"
+            ]
+        ]
+
+
+renderNews : Html Msg
+renderNews =
+    div [ class "home-news" ]
+        [ div [ class "news-item" ]
+            [ h3 [] [ text "Thanks for trying the Beta" ]
+            , div [ class "date" ] [ text "05/11/18" ]
+            , p [] [ text "Gulliver’s Guide is still in development, but with your help and support we’ll continue to work towards making it an even better experience." ]
+            , p [] [ text "If you’ve got any feedback, please feel free to contact us — we’d be more than happy to hear your thoughts!" ]
+            ]
+        , div [ class "news-item" ]
+            [ h3 [] [ text "Gulliver's Diary - Entry 1" ]
+            , div [ class "date" ] [ text "13/10/18" ]
+            , p [] [ text "I've been thinking a lot lately -- perhaps I should create a guide to help everyone explore the hidden wonders in their city?" ]
             ]
         ]
 
