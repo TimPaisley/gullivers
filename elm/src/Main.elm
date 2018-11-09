@@ -2,7 +2,7 @@ module Main exposing (Location, Model, Msg(..), init, locationCard, main, update
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, div, h1, h2, h3, img, p, span, text)
+import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, span, text, ul)
 import Html.Attributes exposing (class, href, id, src, style)
 import Html.Events exposing (onClick)
 import Http
@@ -19,6 +19,7 @@ import Url exposing (Url)
 
 type alias Model =
     { flags : Flags
+    , adventures : WebData (List Adventure)
     , locations : WebData (List Location)
     , screen : Screen
     , key : Nav.Key
@@ -37,19 +38,26 @@ type alias Token =
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     ( { flags = flags
+      , adventures = NotAsked
       , locations = NotAsked
       , screen = screenFromUrl url
       , key = key
       , visitResult = NotAsked
       }
-    , locationsRequest flags.token
-        |> RemoteData.sendRequest
-        |> Cmd.map UpdateLocations
+    , Cmd.batch
+        [ locationsRequest flags.token
+            |> RemoteData.sendRequest
+            |> Cmd.map UpdateLocations
+        , adventuresRequest flags.token
+            |> RemoteData.sendRequest
+            |> Cmd.map UpdateAdventures
+        ]
     )
 
 
 type Screen
     = Home
+    | Adventures
     | Locations
 
 
@@ -57,8 +65,9 @@ type alias Adventure =
     { id : Int
     , name : String
     , description : String
-    , badge : String
-    , experience : Int
+    , badgeUrl : String
+    , difficulty : Int
+    , wheelchair_accessible : Bool
     }
 
 
@@ -84,6 +93,7 @@ type alias LatLng =
 
 type Msg
     = NoOp
+    | UpdateAdventures (WebData (List Adventure))
     | UpdateLocations (WebData (List Location))
     | ChangeScreen Screen
     | RequestUrl Browser.UrlRequest
@@ -98,6 +108,9 @@ screenFromUrl url =
         "/" ->
             Home
 
+        "/adventures" ->
+            Adventures
+
         "/locations" ->
             Locations
 
@@ -110,6 +123,9 @@ update msg model =
     case msg of
         NoOp ->
             ( model, Cmd.none )
+
+        UpdateAdventures adventures ->
+            ( { model | adventures = adventures }, Cmd.none )
 
         UpdateLocations locations ->
             ( { model | locations = locations }, Cmd.none )
@@ -151,6 +167,22 @@ update msg model =
             ( { model | visitResult = result }, Cmd.none )
 
 
+adventuresRequest : Token -> Http.Request (List Adventure)
+adventuresRequest token =
+    Http.request
+        { method = "GET"
+        , headers =
+            [ Http.header "X-CSRF-Token" token
+            , Http.header "Accept" "application/json"
+            ]
+        , url = "/adventures"
+        , body = Http.emptyBody
+        , expect = Http.expectJson decodeAdventures
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+
 locationsRequest : Token -> Http.Request (List Location)
 locationsRequest token =
     Http.request
@@ -165,6 +197,30 @@ locationsRequest token =
         , timeout = Nothing
         , withCredentials = False
         }
+
+
+decodeAdventures : Decoder (List Adventure)
+decodeAdventures =
+    let
+        decodeAdventure =
+            Decode.map6 makeAdventure
+                (Decode.field "id" Decode.int)
+                (Decode.field "name" Decode.string)
+                (Decode.field "description" Decode.string)
+                (Decode.field "badge_url" Decode.string)
+                (Decode.field "difficulty" Decode.int)
+                (Decode.field "wheelchair_accessible" Decode.bool)
+
+        makeAdventure id name description badgeUrl difficulty wheelchair_accessible =
+            { id = id
+            , name = name
+            , description = description
+            , badgeUrl = badgeUrl
+            , difficulty = difficulty
+            , wheelchair_accessible = wheelchair_accessible
+            }
+    in
+    Decode.list decodeAdventure
 
 
 decodeLocations : Decoder (List Location)
@@ -262,6 +318,9 @@ view model =
             Home ->
                 renderHomeScreen model
 
+            Adventures ->
+                renderAdventuresScreen model
+
             Locations ->
                 renderLocationsScreen model
         ]
@@ -273,10 +332,19 @@ renderHeader screen =
         content =
             case screen of
                 Home ->
-                    [ h1 [] [ text "Gulliver's Guide" ] ]
+                    [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Log Out" ] ]
+                    , h1 [] [ text "Gulliver's Guide" ]
+                    ]
+
+                Adventures ->
+                    [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Back to Home" ] ]
+                    , h1 [] [ text "Adventures" ]
+                    ]
 
                 Locations ->
-                    [ h1 [] [ text "Locations" ] ]
+                    [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Back to Home" ] ]
+                    , h1 [] [ text "Locations" ]
+                    ]
     in
     div [ class "header" ] content
 
@@ -287,7 +355,7 @@ renderHomeScreen model =
         [ renderHeader model.screen
         , renderProfile model
         , renderNews
-        , a [ href "/locations" ]
+        , a [ href "/adventures" ]
             [ div [ class "action-button" ]
                 [ text "Go on an Adventure" ]
             ]
@@ -327,6 +395,58 @@ renderNews =
         ]
 
 
+renderAdventuresScreen : Model -> Html Msg
+renderAdventuresScreen model =
+    div [ id "adventures-screen" ]
+        [ renderHeader model.screen
+        , renderAdventures model.adventures
+        ]
+
+
+renderAdventures : WebData (List Adventure) -> Html Msg
+renderAdventures remoteAdventures =
+    case remoteAdventures of
+        NotAsked ->
+            text ""
+
+        Loading ->
+            text "Loading Adventures..."
+
+        Success adventures ->
+            ul [ class "cards" ] (List.indexedMap renderAdventureCard adventures)
+
+        Failure _ ->
+            text "error"
+
+
+renderAdventureCard : Int -> Adventure -> Html Msg
+renderAdventureCard idx adventure =
+    let
+        imageUrl =
+            "https://unsplash.it/800/600?image=" ++ String.fromInt (70 + idx)
+
+        wheelchairInfo =
+            if adventure.wheelchair_accessible then
+                "Wheelchair Accessible"
+
+            else
+                ""
+    in
+    li [ class "card-item" ]
+        [ div [ class "card" ]
+            [ div [ class "image", style "background-image" ("url(" ++ imageUrl ++ ")") ] []
+            , div [ class "content" ]
+                [ div [ class "title" ] [ text adventure.name ]
+                , p [ class "description" ] [ text adventure.description ]
+                , div [ class "information" ]
+                    [ div [] [ text wheelchairInfo ]
+                    , div [] [ text <| "Difficulty Level " ++ String.fromInt adventure.difficulty ]
+                    ]
+                ]
+            ]
+        ]
+
+
 renderLocationsScreen : Model -> Html Msg
 renderLocationsScreen model =
     div []
@@ -349,7 +469,7 @@ renderLocations remoteLocations =
             text ""
 
         Loading ->
-            text "Loading locations..."
+            text "Loading Locations..."
 
         Success locations ->
             div [] (List.map locationCard locations)

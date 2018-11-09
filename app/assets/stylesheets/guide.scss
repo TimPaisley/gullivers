@@ -2,14 +2,32 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+*,
+*::before,
+*::after { 
+    box-sizing: border-box;
+}
+
+html {
+    background-color: #f0f0f0;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    margin: 0;
-    padding: 0;
+    color: #999;
+    font-family: 'Roboto','Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0;
+    padding: 1rem;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -moz-font-feature-settings: "liga" on;
 }
 
 a {
     text-decoration: none;
+    color: initial;
 }
 
 h1 {
@@ -23,12 +41,20 @@ h1 {
 }
 
 .header {
-    padding: 0 20px;
+    margin: 20px;
 
     h1 {
-        text-align: center;
-        margin-bottom: 0;
-        color: #FFCC00;
+        text-align: left;
+        margin: 0;
+    }
+}
+
+.back-button {
+    opacity: 0.5;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 1;
     }
 }
 
@@ -53,7 +79,6 @@ h1 {
     
             h1, h2, h3 {
                 margin: 0 0 20px 0;
-                color: #FFCC00;
             }
     
             &.left {
@@ -94,49 +119,107 @@ h1 {
 .action-button {
     margin: 20px;
     padding: 30px 20px;
-    background-color: #FFCC00;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #333;
+    color: white;
 }
 
-.card {
-    border: 1px solid #CCC;
-    margin-bottom: 10px;
+// ===== Adventures Cards ===== //
+// Adapted from https://codepen.io/mcraiganthony/pen/NxGxqm?editors=1100
+
+.cards {
     display: flex;
-    cursor: pointer;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-    height: 100px;
-    
-    &:hover {
-        border-color: black;
-    }
-    
-    img {
-        align-self: center;
-        height: 100px;
-        width: 100px;
-        object-fit: cover;
-    }
-    
-    .content {
-        flex: 1;
+    .card-item {
         display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        padding: 10px;
+        padding: 1rem;
 
-        h1, h2, h3, p {
-            margin: 0;
+        @media (min-width: 40rem) {
+            width: 50%;
         }
 
-        p {
-            overflow: ellipsis;
+        @media (min-width: 56rem) {
+            width: 33.3333%;
         }
-    }
 
-    .value {
-        align-self: center;
-        padding: 10px;
+        .card {
+            background-color: white;
+            border-radius: 0.25rem;
+            box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            cursor: pointer;
+
+            &:hover {
+                .image {
+                    filter: contrast(100%);
+                }
+            }
+
+            .content {
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                padding: 1rem;
+
+                .title {
+                    color: #696969;
+                    font-size: 1.25rem;
+                    font-weight: 300;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                }
+
+                .description {
+                    flex: 1 1 auto;
+                    font-size: 0.875rem;
+                    line-height: 1.5;
+                    margin-bottom: 1.25rem;
+                }
+
+                .information {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 0.8rem;
+                    opacity: 0.5;
+                }
+            }
+
+            .image {
+                height: auto;
+                max-width: 100%;
+                vertical-align: middle;
+
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                border-top-left-radius: 0.25rem;
+                border-top-right-radius: 0.25rem;
+                filter: contrast(70%);
+                overflow: hidden;
+                position: relative;
+                transition: filter 0.5s cubic-bezier(.43,.41,.22,.91);
+
+                &::before {
+                    content: "";
+                    display: block;
+                    padding-top: 56.25%; // 16:9 aspect ratio
+                }
+
+                @media(min-width: 40rem) {
+                    &::before {
+                        padding-top: 66.6%; // 3:2 aspect ratio
+                    }
+                }
+            }
+        }
     }
 }
