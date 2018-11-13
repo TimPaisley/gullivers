@@ -58,6 +58,7 @@ init flags url key =
 type Screen
     = Home
     | Adventures
+    | AdventureMap Int
     | Locations
 
 
@@ -100,18 +101,32 @@ type Msg
     | ChangeUrl Url
     | VisitLocation Location
     | UpdateVisitResults (WebData ())
+    | ViewAdventureMap Int
 
 
 screenFromUrl : Url -> Screen
 screenFromUrl url =
-    case url.path of
-        "/" ->
+    let
+        segments =
+            String.split "/" url.path
+                |> List.filter (\s -> s /= "")
+    in
+    case segments of
+        [] ->
             Home
 
-        "/adventures" ->
+        [ "adventures" ] ->
             Adventures
 
-        "/locations" ->
+        [ "adventures", stringId ] ->
+            case String.toInt stringId of
+                Just id ->
+                    AdventureMap id
+
+                Nothing ->
+                    Adventures
+
+        [ "locations" ] ->
             Locations
 
         _ ->
@@ -165,6 +180,13 @@ update msg model =
 
         UpdateVisitResults result ->
             ( { model | visitResult = result }, Cmd.none )
+
+        ViewAdventureMap id ->
+            let
+                url =
+                    "/adventures/" ++ String.fromInt id
+            in
+            ( model, Nav.pushUrl model.key url )
 
 
 adventuresRequest : Token -> Http.Request (List Adventure)
@@ -321,6 +343,9 @@ view model =
             Adventures ->
                 renderAdventuresScreen model
 
+            AdventureMap id ->
+                renderAdventureMap model id
+
             Locations ->
                 renderLocationsScreen model
         ]
@@ -339,6 +364,11 @@ renderHeader screen =
                 Adventures ->
                     [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Back to Home" ] ]
                     , h1 [] [ text "Adventures" ]
+                    ]
+
+                AdventureMap id ->
+                    [ a [ href "/adventures" ] [ div [ class "back-button" ] [ text "← Back to Adventures" ] ]
+                    , h1 [] [ text ("Adventure " ++ String.fromInt id) ]
                     ]
 
                 Locations ->
@@ -433,7 +463,7 @@ renderAdventureCard idx adventure =
                 ""
     in
     li [ class "card-item" ]
-        [ div [ class "card" ]
+        [ div [ class "card", onClick <| ViewAdventureMap adventure.id ]
             [ div [ class "image", style "background-image" ("url(" ++ imageUrl ++ ")") ] []
             , div [ class "content" ]
                 [ div [ class "title" ] [ text adventure.name ]
@@ -444,6 +474,14 @@ renderAdventureCard idx adventure =
                     ]
                 ]
             ]
+        ]
+
+
+renderAdventureMap : Model -> Int -> Html Msg
+renderAdventureMap model adventureId =
+    div [ id "adventure-map-screen" ]
+        [ renderHeader model.screen
+        , div [ class "embed-container" ] []
         ]
 
 
