@@ -1,4 +1,4 @@
-module Main exposing (Location, Model, Msg(..), init, locationCard, main, update, view)
+module Main exposing (Location, Model, Msg(..), init, main, update, view)
 
 import Browser
 import Browser.Navigation as Nav
@@ -59,7 +59,6 @@ type Screen
     = Home
     | Adventures
     | AdventureMap Int
-    | Locations
 
 
 type alias Adventure =
@@ -125,9 +124,6 @@ screenFromUrl url =
 
                 Nothing ->
                     Adventures
-
-        [ "locations" ] ->
-            Locations
 
         _ ->
             Home
@@ -345,9 +341,6 @@ view model =
 
             AdventureMap id ->
                 renderAdventureMap model id
-
-            Locations ->
-                renderLocationsScreen model
         ]
 
 
@@ -369,11 +362,6 @@ renderHeader screen =
                 AdventureMap id ->
                     [ a [ href "/adventures" ] [ div [ class "back-button" ] [ text "← Back to Adventures" ] ]
                     , h1 [] [ text ("Adventure " ++ String.fromInt id) ]
-                    ]
-
-                Locations ->
-                    [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Back to Home" ] ]
-                    , h1 [] [ text "Locations" ]
                     ]
     in
     div [ class "header" ] content
@@ -482,49 +470,6 @@ renderAdventureMap model adventureId =
     div [ id "adventure-map-screen" ]
         [ renderHeader model.screen
         , div [ class "embed-container" ] []
-        ]
-
-
-renderLocationsScreen : Model -> Html Msg
-renderLocationsScreen model =
-    div []
-        [ renderHeader model.screen
-        , renderVisitStatus model.visitResult
-        , a [ href "/" ] [ text "Home" ]
-        , renderLocations model.locations
-        ]
-
-
-renderVisitStatus : WebData () -> Html Msg
-renderVisitStatus result =
-    div [] [ text <| Debug.toString result ]
-
-
-renderLocations : WebData (List Location) -> Html Msg
-renderLocations remoteLocations =
-    case remoteLocations of
-        NotAsked ->
-            text ""
-
-        Loading ->
-            text "Loading Locations..."
-
-        Success locations ->
-            div [] (List.map locationCard locations)
-
-        Failure _ ->
-            text "Error"
-
-
-locationCard : Location -> Html Msg
-locationCard location =
-    div [ class "card", onClick (VisitLocation location) ]
-        [ img [ src location.imageUrl ] []
-        , div [ class "content" ]
-            [ h2 [] [ text location.name ]
-            , p [] [ text "Undiscovered" ]
-            ]
-        , div [ class "value" ] [ text <| String.fromInt location.reward ]
         ]
 
 
