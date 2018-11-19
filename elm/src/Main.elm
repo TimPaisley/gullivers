@@ -3,7 +3,7 @@ module Main exposing (Location, Model, Msg(..), init, main, update, view)
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, span, text, ul)
-import Html.Attributes exposing (class, href, id, src, style)
+import Html.Attributes exposing (class, href, id, src, style, target)
 import Html.Events exposing (onClick)
 import Http
 import Icons exposing (backpackIcon, campfireIcon, compassIcon, mapIcon)
@@ -57,7 +57,6 @@ init flags url key =
 
 type Screen
     = Home
-    | Adventures
     | AdventureMap Int
 
 
@@ -114,16 +113,13 @@ screenFromUrl url =
         [] ->
             Home
 
-        [ "adventures" ] ->
-            Adventures
-
         [ "adventures", stringId ] ->
             case String.toInt stringId of
                 Just id ->
                     AdventureMap id
 
                 Nothing ->
-                    Adventures
+                    Home
 
         _ ->
             Home
@@ -336,9 +332,6 @@ view model =
             Home ->
                 renderHomeScreen model
 
-            Adventures ->
-                renderAdventuresScreen model
-
             AdventureMap id ->
                 renderAdventureMap model id
         ]
@@ -350,74 +343,61 @@ renderHeader screen =
         content =
             case screen of
                 Home ->
-                    [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Log Out" ] ]
-                    , h1 [] [ text "Gulliver's Guide" ]
-                    ]
-
-                Adventures ->
-                    [ a [ href "/" ] [ div [ class "back-button" ] [ text "← Back to Home" ] ]
-                    , h1 [] [ text "Adventures" ]
+                    [ div []
+                        [ div [] [ text "Gulliver's Guide to Wellington" ]
+                        , h1 [] [ text "Adventures" ]
+                        ]
+                    , renderProfile
                     ]
 
                 AdventureMap id ->
-                    [ a [ href "/adventures" ] [ div [ class "back-button" ] [ text "← Back to Adventures" ] ]
-                    , h1 [] [ text ("Adventure " ++ String.fromInt id) ]
+                    [ div []
+                        [ a [ href "/" ] [ text "← Back to Adventures" ]
+                        , h1 [] [ text ("Adventure " ++ String.fromInt id) ]
+                        ]
                     ]
     in
     div [ class "header" ] content
 
 
+renderProfile : Html Msg
+renderProfile =
+    div [ class "profile" ]
+        [ div [ class "section set-size" ]
+            [ div [ class "pie-wrapper progress-80" ]
+                [ span [ class "label" ]
+                    [ text "8"
+                    , span [ class "smaller" ] [ text "m" ]
+                    ]
+                , div [ class "pie" ]
+                    [ div [ class "left-side half-circle" ] []
+                    , div [ class "right-side half-circle" ] []
+                    ]
+                ]
+            ]
+        , div [ class "section" ]
+            [ h2 [] [ text "Development" ]
+            , text "Junior Adventurer"
+            ]
+        ]
+
+
 renderHomeScreen : Model -> Html Msg
 renderHomeScreen model =
-    div [ id "home-screen" ]
+    div []
         [ renderHeader model.screen
-        , renderProfile model
-        , renderNews
-        , a [ href "/adventures" ]
-            [ div [ class "action-button" ]
-                [ text "Go on an Adventure" ]
-            ]
-        ]
-
-
-renderProfile : Model -> Html Msg
-renderProfile model =
-    div [ class "home-profile" ]
-        [ div [ class "section left" ]
-            [ img [ src "https://via.placeholder.com/100/333333/FFFFFF" ] []
-            ]
-        , div [ class "section right" ]
-            [ span []
-                [ text "Welcome back,"
-                , h2 [] [ text "Development" ]
-                ]
-            , text "Level 1"
-            ]
-        ]
-
-
-renderNews : Html Msg
-renderNews =
-    div [ class "home-news" ]
-        [ div [ class "news-item" ]
-            [ h3 [] [ text "Thanks for trying the Beta" ]
-            , div [ class "date" ] [ text "05/11/18" ]
-            , p [] [ text "Gulliver’s Guide is still in development, but with your help and support we’ll continue to work towards making it an even better experience." ]
-            , p [] [ text "If you’ve got any feedback, please feel free to contact us — we’d be more than happy to hear your thoughts!" ]
-            ]
-        , div [ class "news-item" ]
-            [ h3 [] [ text "Gulliver's Diary - Entry 1" ]
-            , div [ class "date" ] [ text "13/10/18" ]
-            , p [] [ text "I've been thinking a lot lately -- perhaps I should create a guide to help everyone explore the hidden wonders in their city?" ]
-            ]
-        ]
-
-
-renderAdventuresScreen : Model -> Html Msg
-renderAdventuresScreen model =
-    div [ id "adventures-screen" ]
-        [ renderHeader model.screen
+        , renderFilters
         , renderAdventures model.adventures
+        , renderFooter
+        ]
+
+
+renderFilters : Html Msg
+renderFilters =
+    div [ class "filters" ]
+        [ div [] [ text "Location" ]
+        , div [] [ text "Difficulty" ]
+        , div [] [ text "Accessibility" ]
         ]
 
 
@@ -470,6 +450,17 @@ renderAdventureMap model adventureId =
     div [ id "adventure-map-screen" ]
         [ renderHeader model.screen
         , div [ class "embed-container" ] []
+        ]
+
+
+renderFooter : Html Msg
+renderFooter =
+    div [ class "footer" ]
+        [ a [ href "https://github.com/timpaisley/gullivers", target "_blank" ]
+            [ div [] [ text "Made using Gulliver's Guide" ] ]
+        , div [] [ text "About" ]
+        , div [] [ text "Legal" ]
+        , div [] [ text "Contact" ]
         ]
 
 
