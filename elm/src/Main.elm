@@ -355,9 +355,32 @@ renderHeader screen =
                         [ a [ href "/" ] [ text "← Back to Adventures" ]
                         , h1 [] [ text ("Adventure " ++ String.fromInt id) ]
                         ]
+                    , div [ class "set-size" ]
+                        [ div [ class "pie-wrapper progress-80" ]
+                            [ span [ class "label" ]
+                                [ text "80"
+                                , span [ class "smaller" ] [ text "%" ]
+                                ]
+                            , div [ class "pie" ]
+                                [ div [ class "left-side half-circle" ] []
+                                , div [ class "right-side half-circle" ] []
+                                ]
+                            ]
+                        ]
                     ]
     in
     div [ class "header" ] content
+
+
+renderFooter : Html Msg
+renderFooter =
+    div [ class "footer" ]
+        [ a [ href "https://github.com/timpaisley/gullivers", target "_blank" ]
+            [ div [] [ text "Made using Gulliver's Guide" ] ]
+        , div [] [ text "About" ]
+        , div [] [ text "Legal" ]
+        , div [] [ text "Contact" ]
+        ]
 
 
 renderProfile : Html Msg
@@ -449,18 +472,17 @@ renderAdventureMap : Model -> Int -> Html Msg
 renderAdventureMap model adventureId =
     div [ id "adventure-map-screen" ]
         [ renderHeader model.screen
-        , div [ class "embed-container" ] []
-        ]
-
-
-renderFooter : Html Msg
-renderFooter =
-    div [ class "footer" ]
-        [ a [ href "https://github.com/timpaisley/gullivers", target "_blank" ]
-            [ div [] [ text "Made using Gulliver's Guide" ] ]
-        , div [] [ text "About" ]
-        , div [] [ text "Legal" ]
-        , div [] [ text "Contact" ]
+        , div [ id "map" ] []
+        , div [ id "locations" ]
+            [ div [ class "content" ]
+                [ div [ class "title" ] [ text "Location Name" ]
+                , p [ class "description" ] [ text "Description" ]
+                , div [ class "information" ]
+                    [ div [] [ text "◀ Previous Location" ]
+                    , div [] [ text "Next Location ▶" ]
+                    ]
+                ]
+            ]
         ]
 
 

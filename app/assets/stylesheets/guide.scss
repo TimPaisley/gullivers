@@ -13,8 +13,8 @@ body {
     font-family: 'Roboto','Helvetica Neue', Helvetica, Arial, sans-serif;
     font-style: normal;
     font-weight: 400;
-    letter-spacing: 0;
-    padding: 1rem;
+    margin: 0;
+    padding: 0;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -38,14 +38,15 @@ h1 {
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;
+    padding: 10px;
 }
 
 .header {
-    margin: 20px;
-    margin-bottom: 10px;
+    margin: 10px 20px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
 
     h1 {
         text-align: left;
@@ -54,6 +55,24 @@ h1 {
 
     > div {
         margin-bottom: 10px;
+    }
+}
+
+.footer {
+    margin: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 0.8rem;
+
+    div {
+        margin-bottom: 10px;
+
+        &:not(:first-child) {
+            margin-left: 30px;
+        }
     }
 }
 
@@ -108,20 +127,69 @@ h1 {
     color: white;
 }
 
-.footer {
-    margin: 20px;
-    margin-bottom: 10px;
+#adventure-map-screen {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    align-items: center;
-    font-size: 0.8rem;
+    flex-direction: column;
+    height: calc(100vh - 20px);
 
     div {
-        margin-bottom: 10px;
+        flex: 0 0 auto;
+    }
 
-        &:not(:first-child) {
-            margin-left: 30px;
+    #map {
+        flex: 1 0 auto;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
+        background-image: url("https://unsplash.it/800/600?image=67");
+        background-position: center center;
+        background-size: cover;
+    }
+
+    #locations {
+        height: 40%;
+        background-color: white;
+        display: flex;
+
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+        box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
+
+        .content {
+            flex: 1 1 auto;
+
+            .description {
+                overflow: auto;
+            }
         }
+    }
+}
+
+.content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding: 1rem;
+
+    .title {
+        color: #696969;
+        font-size: 1.25rem;
+        font-weight: 300;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .description {
+        flex: 1 1 auto;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+    }
+
+    .information {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        opacity: 0.5;
     }
 }
