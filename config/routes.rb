@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :adventure_locations
   resources :adventures
   resources :visits
   resources :locations
