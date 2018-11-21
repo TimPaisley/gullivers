@@ -4,6 +4,6 @@ class AdventuresController < ApplicationController
     end
 
     def show
-        render json: Adventure.all
+        render json: Adventure.find(params[:id])
     end
 end

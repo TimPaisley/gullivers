@@ -1,15 +1,14 @@
-module Main exposing (Location, Model, Msg(..), init, main, update, view)
+module Main exposing (Model, Msg(..), init, main, update, view)
 
+import API exposing (adventuresRequest, currentAdventureRequest, locationsRequest, visitLocationRequest)
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, span, text, ul)
 import Html.Attributes exposing (class, href, id, src, style, target)
 import Html.Events exposing (onClick)
-import Http
 import Icons exposing (backpackIcon, campfireIcon, compassIcon, mapIcon)
-import Json.Decode as Decode exposing (Decoder)
-import Json.Encode as Encode
 import RemoteData exposing (RemoteData(..), WebData)
+import Types exposing (Adventure, Location, Screen(..), Token)
 import Url exposing (Url)
 
 
@@ -31,10 +30,6 @@ type alias Flags =
     { token : Token }
 
 
-type alias Token =
-    String
-
-
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     ( { flags = flags
@@ -45,45 +40,14 @@ init flags url key =
       , visitResult = NotAsked
       }
     , Cmd.batch
-        [ locationsRequest flags.token
+        [ API.locationsRequest flags.token
             |> RemoteData.sendRequest
             |> Cmd.map UpdateLocations
-        , adventuresRequest flags.token
+        , API.adventuresRequest flags.token
             |> RemoteData.sendRequest
             |> Cmd.map UpdateAdventures
         ]
     )
-
-
-type Screen
-    = Home
-    | AdventureMap Int
-
-
-type alias Adventure =
-    { id : Int
-    , name : String
-    , description : String
-    , badgeUrl : String
-    , difficulty : Int
-    , wheelchair_accessible : Bool
-    }
-
-
-type alias Location =
-    { id : Int
-    , name : String
-    , description : String
-    , imageUrl : String
-    , reward : Int
-    , latLng : LatLng
-    }
-
-
-type alias LatLng =
-    { lat : Float
-    , lng : Float
-    }
 
 
 
@@ -179,139 +143,6 @@ update msg model =
                     "/adventures/" ++ String.fromInt id
             in
             ( model, Nav.pushUrl model.key url )
-
-
-adventuresRequest : Token -> Http.Request (List Adventure)
-adventuresRequest token =
-    Http.request
-        { method = "GET"
-        , headers =
-            [ Http.header "X-CSRF-Token" token
-            , Http.header "Accept" "application/json"
-            ]
-        , url = "/adventures"
-        , body = Http.emptyBody
-        , expect = Http.expectJson decodeAdventures
-        , timeout = Nothing
-        , withCredentials = False
-        }
-
-
-locationsRequest : Token -> Http.Request (List Location)
-locationsRequest token =
-    Http.request
-        { method = "GET"
-        , headers =
-            [ Http.header "X-CSRF-Token" token
-            , Http.header "Accept" "application/json"
-            ]
-        , url = "/locations"
-        , body = Http.emptyBody
-        , expect = Http.expectJson decodeLocations
-        , timeout = Nothing
-        , withCredentials = False
-        }
-
-
-decodeAdventures : Decoder (List Adventure)
-decodeAdventures =
-    let
-        decodeAdventure =
-            Decode.map6 makeAdventure
-                (Decode.field "id" Decode.int)
-                (Decode.field "name" Decode.string)
-                (Decode.field "description" Decode.string)
-                (Decode.field "badge_url" Decode.string)
-                (Decode.field "difficulty" Decode.int)
-                (Decode.field "wheelchair_accessible" Decode.bool)
-
-        makeAdventure id name description badgeUrl difficulty wheelchair_accessible =
-            { id = id
-            , name = name
-            , description = description
-            , badgeUrl = badgeUrl
-            , difficulty = difficulty
-            , wheelchair_accessible = wheelchair_accessible
-            }
-    in
-    Decode.list decodeAdventure
-
-
-decodeLocations : Decoder (List Location)
-decodeLocations =
-    let
-        decodeLocation =
-            Decode.map6 makeLocation
-                (Decode.field "id" Decode.int)
-                (Decode.field "name" Decode.string)
-                (Decode.field "description" Decode.string)
-                (Decode.field "image_url" Decode.string)
-                (Decode.field "reward" Decode.int)
-                (Decode.field "geometry" decodeGeometry)
-
-        makeLocation id name description imageUrl reward latLng =
-            { id = id
-            , name = name
-            , description = description
-            , imageUrl = imageUrl
-            , reward = reward
-            , latLng = latLng
-            }
-
-        decodeGeometry : Decoder LatLng
-        decodeGeometry =
-            Decode.string |> Decode.map (decodePointString >> pointPartsToLatLng) |> Decode.andThen (maybeToDecoder "Failed to decode geometry")
-
-        pointPartsToLatLng : List String -> Maybe LatLng
-        pointPartsToLatLng parts =
-            case parts of
-                _ :: latString :: lngString :: [] ->
-                    Maybe.map2 (\lat lng -> { lat = lat, lng = lng })
-                        (String.toFloat latString)
-                        (String.toFloat lngString)
-
-                _ ->
-                    Nothing
-
-        decodePointString : String -> List String
-        decodePointString s =
-            s
-                |> String.replace "(" ""
-                |> String.replace ")" ""
-                |> String.split " "
-    in
-    Decode.list decodeLocation
-
-
-maybeToDecoder : String -> Maybe a -> Decoder a
-maybeToDecoder error maybe =
-    case maybe of
-        Just a ->
-            Decode.succeed a
-
-        Nothing ->
-            Decode.fail error
-
-
-visitLocationRequest : Token -> Location -> Http.Request ()
-visitLocationRequest token location =
-    Http.request
-        { method = "POST"
-        , headers =
-            [ Http.header "X-CSRF-Token" token
-            , Http.header "Accept" "application/json"
-            ]
-        , url = "/visits"
-        , body = Http.jsonBody <| encodeLocation location
-        , expect = Http.expectJson <| Decode.succeed ()
-        , timeout = Nothing
-        , withCredentials = False
-        }
-
-
-encodeLocation : Location -> Encode.Value
-encodeLocation location =
-    Encode.object [ ( "location_id", Encode.int location.id ) ]
 
 
 
