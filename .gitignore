@@ -7,8 +7,8 @@
 # Ignore bundler config.
 /.bundle
 
-# Ignore bundled Elm javascript
-/app/assets/javascripts/bundle.js
+# Ignore bundled Elm javascript (ignored in order to deploy to Heroku)
+# /app/assets/javascripts/bundle.js
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
