@@ -1,9 +1,9 @@
 module Main exposing (Model, Msg(..), init, main, update, view)
 
-import API exposing (adventuresRequest, locationsRequest, visitLocationRequest)
+import API exposing (adventuresRequest, locationsRequest, logOutRequest, visitLocationRequest)
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, span, text, ul)
+import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, small, span, text, ul)
 import Html.Attributes exposing (class, href, id, src, style, target)
 import Html.Events exposing (onClick)
 import Icons exposing (backpackIcon, campfireIcon, compassIcon, mapIcon)
@@ -58,6 +58,8 @@ type Msg
     | VisitLocation Location
     | UpdateVisitResults (WebData ())
     | ViewAdventureMap Int
+    | LogOut
+    | RedirectHome (WebData ())
 
 
 screenFromUrl : Url -> Screen
@@ -134,6 +136,16 @@ update msg model =
                     "/adventures/" ++ String.fromInt id ++ "/locations/1"
             in
             ( model, Nav.pushUrl model.key url )
+
+        LogOut ->
+            ( model
+            , logOutRequest model.flags.token
+                |> RemoteData.sendRequest
+                |> Cmd.map RedirectHome
+            )
+
+        RedirectHome _ ->
+            ( { model | screen = Home }, Nav.load "/" )
 
 
 
@@ -233,9 +245,9 @@ renderProfile =
                     ]
                 ]
             ]
-        , div [ class "section" ]
-            [ h2 [] [ text "Development" ]
-            , text "Junior Adventurer"
+        , div [ class "section", onClick LogOut ]
+            [ text "Junior Adventurer"
+            , h2 [] [ text "Development" ]
             ]
         ]
 

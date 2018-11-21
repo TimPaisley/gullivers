@@ -4477,6 +4477,7 @@ var author$project$Main$ChangeUrl = function (a) {
 var author$project$Main$RequestUrl = function (a) {
 	return {$: 'RequestUrl', a: a};
 };
+var author$project$Main$LogOut = {$: 'LogOut'};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4984,6 +4985,23 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$Main$renderProfile = A2(
 	elm$html$Html$div,
 	_List_fromArray(
@@ -5057,18 +5075,19 @@ var author$project$Main$renderProfile = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('section')
+					elm$html$Html$Attributes$class('section'),
+					elm$html$Html$Events$onClick(author$project$Main$LogOut)
 				]),
 			_List_fromArray(
 				[
+					elm$html$Html$text('Junior Adventurer'),
 					A2(
 					elm$html$Html$h2,
 					_List_Nil,
 					_List_fromArray(
 						[
 							elm$html$Html$text('Development')
-						])),
-					elm$html$Html$text('Junior Adventurer')
+						]))
 				]))
 		]));
 var elm$html$Html$a = _VirtualDom_node('a');
@@ -5415,23 +5434,6 @@ var author$project$Main$ViewAdventureMap = function (a) {
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
 var author$project$Main$renderAdventureCard = F2(
 	function (idx, adventure) {
 		var wheelchairInfo = adventure.wheelchair_accessible ? 'Wheelchair Accessible' : '';
@@ -6656,6 +6658,23 @@ var author$project$Main$init = F3(
 				krisajenkins$remotedata$RemoteData$sendRequest(
 					author$project$API$adventuresRequest(flags.token))));
 	});
+var author$project$API$logOutRequest = function (token) {
+	return elm$http$Http$request(
+		{
+			body: elm$http$Http$emptyBody,
+			expect: elm$http$Http$expectJson(
+				elm$json$Json$Decode$succeed(_Utils_Tuple0)),
+			headers: _List_fromArray(
+				[
+					A2(elm$http$Http$header, 'X-CSRF-Token', token),
+					A2(elm$http$Http$header, 'Accept', 'application/json')
+				]),
+			method: 'DELETE',
+			timeout: elm$core$Maybe$Nothing,
+			url: '/users/sign_out',
+			withCredentials: false
+		});
+};
 var elm$json$Json$Encode$int = _Json_wrap;
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
@@ -6708,6 +6727,9 @@ var author$project$API$visitLocationRequest = F2(
 				withCredentials: false
 			});
 	});
+var author$project$Main$RedirectHome = function (a) {
+	return {$: 'RedirectHome', a: a};
+};
 var author$project$Main$UpdateVisitResults = function (a) {
 	return {$: 'UpdateVisitResults', a: a};
 };
@@ -6974,12 +6996,26 @@ var author$project$Main$update = F2(
 						model,
 						{visitResult: result}),
 					elm$core$Platform$Cmd$none);
-			default:
+			case 'ViewAdventureMap':
 				var id = msg.a;
 				var url = '/adventures/' + (elm$core$String$fromInt(id) + '/locations/1');
 				return _Utils_Tuple2(
 					model,
 					A2(elm$browser$Browser$Navigation$pushUrl, model.key, url));
+			case 'LogOut':
+				return _Utils_Tuple2(
+					model,
+					A2(
+						elm$core$Platform$Cmd$map,
+						author$project$Main$RedirectHome,
+						krisajenkins$remotedata$RemoteData$sendRequest(
+							author$project$API$logOutRequest(model.flags.token))));
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{screen: author$project$Types$Home}),
+					elm$browser$Browser$Navigation$load('/'));
 		}
 	});
 var elm$browser$Browser$application = _Browser_application;

@@ -1,4 +1,4 @@
-module API exposing (adventuresRequest, locationsRequest, visitLocationRequest)
+module API exposing (adventuresRequest, locationsRequest, logOutRequest, visitLocationRequest)
 
 import Http
 import Json.Decode as Decode exposing (Decoder)
@@ -149,3 +149,19 @@ visitLocationRequest token location =
 encodeLocation : Location -> Encode.Value
 encodeLocation location =
     Encode.object [ ( "location_id", Encode.int location.id ) ]
+
+
+logOutRequest : Token -> Http.Request ()
+logOutRequest token =
+    Http.request
+        { method = "DELETE"
+        , headers =
+            [ Http.header "X-CSRF-Token" token
+            , Http.header "Accept" "application/json"
+            ]
+        , url = "/users/sign_out"
+        , body = Http.emptyBody
+        , expect = Http.expectJson <| Decode.succeed ()
+        , timeout = Nothing
+        , withCredentials = False
+        }
