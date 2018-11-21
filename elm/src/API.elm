@@ -1,8 +1,9 @@
-module API exposing (adventuresRequest, currentAdventureRequest, locationsRequest, visitLocationRequest)
+module API exposing (adventuresRequest, locationsRequest, visitLocationRequest)
 
 import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
+import List.Nonempty as Nonempty exposing (Nonempty)
 import Types exposing (Adventure, LatLng, Location, Token)
 
 
@@ -22,23 +23,7 @@ adventuresRequest token =
         }
 
 
-currentAdventureRequest : Token -> Int -> Http.Request Adventure
-currentAdventureRequest token id =
-    Http.request
-        { method = "GET"
-        , headers =
-            [ Http.header "X-CSRF-Token" token
-            , Http.header "Accept" "application/json"
-            ]
-        , url = "/adventures/" ++ String.fromInt id
-        , body = Http.emptyBody
-        , expect = Http.expectJson <| decodeAdventure
-        , timeout = Nothing
-        , withCredentials = False
-        }
-
-
-locationsRequest : Token -> Http.Request (List Location)
+locationsRequest : Token -> Http.Request (Nonempty Location)
 locationsRequest token =
     Http.request
         { method = "GET"
@@ -62,25 +47,27 @@ decodeAdventures =
 decodeAdventure : Decoder Adventure
 decodeAdventure =
     let
-        makeAdventure id name description badgeUrl difficulty wheelchair_accessible =
+        makeAdventure id name description locations badgeUrl difficulty wheelchair_accessible =
             { id = id
             , name = name
             , description = description
+            , locations = locations
             , badgeUrl = badgeUrl
             , difficulty = difficulty
             , wheelchair_accessible = wheelchair_accessible
             }
     in
-    Decode.map6 makeAdventure
+    Decode.map7 makeAdventure
         (Decode.field "id" Decode.int)
         (Decode.field "name" Decode.string)
         (Decode.field "description" Decode.string)
+        (Decode.field "locations" decodeLocations)
         (Decode.field "badge_url" Decode.string)
         (Decode.field "difficulty" Decode.int)
         (Decode.field "wheelchair_accessible" Decode.bool)
 
 
-decodeLocations : Decoder (List Location)
+decodeLocations : Decoder (Nonempty Location)
 decodeLocations =
     let
         decodeLocation =
@@ -123,7 +110,14 @@ decodeLocations =
                 |> String.replace ")" ""
                 |> String.split " "
     in
-    Decode.list decodeLocation
+    decodeNonempty decodeLocation
+
+
+decodeNonempty : Decoder a -> Decoder (Nonempty a)
+decodeNonempty decoder =
+    Decode.list decoder
+        |> Decode.map Nonempty.fromList
+        |> Decode.andThen (maybeToDecoder "List was unexpectedly empty")
 
 
 maybeToDecoder : String -> Maybe a -> Decoder a

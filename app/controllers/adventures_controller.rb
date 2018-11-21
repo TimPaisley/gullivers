@@ -1,9 +1,5 @@
 class AdventuresController < ApplicationController
     def index
-        render json: Adventure.all
-    end
-
-    def show
-        render json: Adventure.find(params[:id])
+        render json: Adventure.all, include: :locations
     end
 end

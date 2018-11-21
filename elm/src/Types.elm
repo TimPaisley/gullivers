@@ -1,15 +1,18 @@
 module Types exposing (Adventure, LatLng, Location, Screen(..), Token)
 
+import List.Nonempty exposing (Nonempty)
+
 
 type Screen
     = Home
-    | AdventureMap Int
+    | AdventureMap Int Int
 
 
 type alias Adventure =
     { id : Int
     , name : String
     , description : String
+    , locations : Nonempty Location
     , badgeUrl : String
     , difficulty : Int
     , wheelchair_accessible : Bool
