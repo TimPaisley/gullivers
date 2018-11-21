@@ -47,3 +47,4 @@ production:
   encoding: unicode
   database: gullivers_guide_production
   pool: 5
+  url: <%= ENV.fetch('DATABASE_URL', '').sub(/^postgres/, "postgis") %>
