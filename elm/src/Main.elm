@@ -71,7 +71,7 @@ screenFromUrl url =
         [] ->
             Home
 
-        [ "adventures", stringId, stringIdx ] ->
+        [ "adventures", stringId, "locations", stringIdx ] ->
             case ( String.toInt stringId, String.toInt stringIdx ) of
                 ( Just id, Just idx ) ->
                     AdventureMap id idx
@@ -131,7 +131,7 @@ update msg model =
         ViewAdventureMap id ->
             let
                 url =
-                    "/adventures/" ++ String.fromInt id ++ "/1"
+                    "/adventures/" ++ String.fromInt id ++ "/locations/1"
             in
             ( model, Nav.pushUrl model.key url )
 
@@ -304,6 +304,22 @@ renderAdventureMap model adventures adventureId locationIdx =
                 location =
                     ListX.getAt locationIdx (Nonempty.toList adventure.locations)
                         |> Maybe.withDefault (Nonempty.head adventure.locations)
+
+                previousLocation =
+                    if locationIdx > 1 then
+                        a [ href <| "/adventures/" ++ String.fromInt adventureId ++ "/locations/" ++ (String.fromInt <| locationIdx - 1) ]
+                            [ div [] [ text "◀ Previous Location" ] ]
+
+                    else
+                        div [] []
+
+                nextLocation =
+                    if locationIdx < Nonempty.length adventure.locations then
+                        a [ href <| "/adventures/" ++ String.fromInt adventureId ++ "/locations/" ++ (String.fromInt <| locationIdx + 1) ]
+                            [ div [] [ text "Next Location ▶" ] ]
+
+                    else
+                        div [] []
             in
             div [ id "adventure-map-screen" ]
                 [ renderHeader model.screen
@@ -313,8 +329,8 @@ renderAdventureMap model adventures adventureId locationIdx =
                         [ div [ class "title" ] [ text location.name ]
                         , p [ class "description" ] [ text location.description ]
                         , div [ class "information" ]
-                            [ div [] [ text "◀ Previous Location" ]
-                            , div [] [ text "Next Location ▶" ]
+                            [ previousLocation
+                            , nextLocation
                             ]
                         ]
                     ]
