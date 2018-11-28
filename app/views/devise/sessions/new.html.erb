@@ -1,26 +1,37 @@
-<h2>Log in</h2>
+<div class="home-page">
+    <h1>Gulliver's Guide</h1>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="btn-section">
+            <div class="field">
+                <%= f.email_field :email, autofocus: true, placeholder: "Email", autocomplete: "email" %>
+            </div>
 
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
+            <div class="field">
+                <%= f.password_field :password, placeholder: "Password", autocomplete: "current-password" %>
+            </div>
 
-  <% if devise_mapping.rememberable? -%>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
-    </div>
-  <% end -%>
+            <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+            <%= link_to "Forgot your password?", new_password_path(resource_name) %>
+            <% end -%>
+        </div>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
-<% end %>
+        <div class="btn-section">
+            <% if devise_mapping.rememberable? -%>
+                <div class="field">
+                <%= f.check_box :remember_me %>
+                <%= f.label :remember_me %>
+                </div>
+            <% end -%>
 
-<%= render "devise/shared/links" %>
+            <%= f.submit "Log In", class: "btn btn-primary" %>
+        </div>
+    <% end %>
+
+    <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+        <div class="btn-section">
+            <p>Don't have an account yet?</p>
+            <%= link_to "Sign up", new_registration_path(resource_name), class: "btn btn-primary" %>
+        </div>
+    <% end -%>
+</div>

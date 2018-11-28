@@ -24,6 +24,7 @@ body {
 a {
     text-decoration: none;
     color: inherit;
+    text-decoration: underline;
 
     &:hover {
         color: #333;
@@ -32,6 +33,65 @@ a {
 
 h1 {
     text-decoration: none;
+}
+
+.home-page {
+    text-align: center;
+
+    .btn-section {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn,
+    input:not([type="checkbox"]) {
+        display: block;
+        border: 1px solid #696969;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: transparent;
+        color: #696969;
+        min-width: 200px;
+        text-decoration: none;
+        font-size: 1rem;
+        margin: 5px 0;
+        
+        &:not([type="email"]):not([type="password"]) {
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 300;
+            font-size: 1.25rem;
+            cursor: pointer;
+
+            &:hover {
+                color: #333;
+                border-color: #333;
+            }
+        }
+    }
+    
+    .pillars {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: stretch;
+        align-items: flex-end;
+    
+        &.big {
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+    
+        .pillar {
+            flex: 1;
+            padding: 10px 30px;
+        }
+    }
+
+    .description {
+        text-align: left;
+    }
 }
 
 #wrapper {
