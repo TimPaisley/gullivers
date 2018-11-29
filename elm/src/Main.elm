@@ -4,13 +4,14 @@ import API exposing (adventuresRequest, locationsRequest, logOutRequest, visitLo
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, small, span, text, ul)
-import Html.Attributes exposing (class, href, id, src, style, target)
+import Html.Attributes exposing (class, classList, href, id, src, style, target)
 import Html.Events exposing (onClick)
 import Icons exposing (backpackIcon, campfireIcon, compassIcon, mapIcon)
 import List.Extra as ListX
 import List.Nonempty as Nonempty exposing (Nonempty)
+import Ports
 import RemoteData exposing (RemoteData(..), WebData)
-import Types exposing (Adventure, Location, Screen(..), Token)
+import Types exposing (Adventure, LatLng, Location, Screen(..), Token)
 import Url exposing (Url)
 
 
@@ -33,15 +34,22 @@ type alias Flags =
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
+    let
+        ( screen, cmd ) =
+            screenFromUrl NotAsked url
+    in
     ( { flags = flags
       , adventures = NotAsked
-      , screen = screenFromUrl url
+      , screen = screen
       , key = key
       , visitResult = NotAsked
       }
-    , API.adventuresRequest flags.token
-        |> RemoteData.sendRequest
-        |> Cmd.map UpdateAdventures
+    , Cmd.batch
+        [ API.adventuresRequest flags.token
+            |> RemoteData.sendRequest
+            |> Cmd.map UpdateAdventures
+        , cmd
+        ]
     )
 
 
@@ -62,27 +70,52 @@ type Msg
     | RedirectHome (WebData ())
 
 
-screenFromUrl : Url -> Screen
-screenFromUrl url =
+screenFromUrl : WebData (List Adventure) -> Url -> ( Screen, Cmd Msg )
+screenFromUrl remoteAdventures url =
     let
         segments =
             String.split "/" url.path
                 |> List.filter (\s -> s /= "")
+
+        defaultLocation =
+            { lat = -41, lng = 174 }
     in
     case segments of
         [] ->
-            Home
+            ( Home, Ports.updateMap Nothing )
 
         [ "adventures", stringId, "locations", stringIdx ] ->
             case ( String.toInt stringId, String.toInt stringIdx ) of
                 ( Just id, Just idx ) ->
-                    AdventureMap id idx
+                    ( AdventureMap id idx
+                    , (Ports.updateMap << Just) <|
+                        Maybe.withDefault defaultLocation <|
+                            locationLatLng remoteAdventures id idx
+                    )
 
                 _ ->
-                    Home
+                    ( Home, Ports.updateMap Nothing )
 
         _ ->
-            Home
+            ( Home, Ports.updateMap Nothing )
+
+
+locationLatLng : WebData (List Adventure) -> Int -> Int -> Maybe LatLng
+locationLatLng remoteAdventures id idx =
+    case remoteAdventures of
+        Success adventures ->
+            let
+                maybeAdventure =
+                    ListX.find (\a -> a.id == id) adventures
+
+                maybeLocation =
+                    -- Forgive me father, for I have sinned
+                    Maybe.andThen (\a -> ListX.getAt (idx - 1) <| Nonempty.toList a.locations) maybeAdventure
+            in
+            Maybe.map .latLng maybeLocation
+
+        _ ->
+            Nothing
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -91,8 +124,22 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        UpdateAdventures adventures ->
-            ( { model | adventures = adventures }, Cmd.none )
+        UpdateAdventures remoteAdventures ->
+            let
+                cmd =
+                    case model.screen of
+                        AdventureMap id idx ->
+                            case locationLatLng remoteAdventures id idx of
+                                Just latlng ->
+                                    Ports.updateMap <| Just latlng
+
+                                _ ->
+                                    Cmd.none
+
+                        _ ->
+                            Cmd.none
+            in
+            ( { model | adventures = remoteAdventures }, cmd )
 
         ChangeScreen screen ->
             ( { model | screen = screen }, Cmd.none )
@@ -117,8 +164,11 @@ update msg model =
             let
                 _ =
                     Debug.log "Change URL" url
+
+                ( screen, cmd ) =
+                    screenFromUrl model.adventures url
             in
-            ( { model | screen = screenFromUrl url }, Cmd.none )
+            ( { model | screen = screen }, cmd )
 
         VisitLocation location ->
             ( model
@@ -135,7 +185,7 @@ update msg model =
                 url =
                     "/adventures/" ++ String.fromInt id ++ "/locations/1"
             in
-            ( model, Nav.pushUrl model.key url )
+            ( model, Cmd.batch [ Nav.pushUrl model.key url ] )
 
         LogOut ->
             ( model
@@ -320,7 +370,7 @@ renderAdventureMap model adventures adventureId locationIdx =
                 previousLocation =
                     if locationIdx > 1 then
                         a [ href <| "/adventures/" ++ String.fromInt adventureId ++ "/locations/" ++ (String.fromInt <| locationIdx - 1) ]
-                            [ div [] [ text "◀ Previous Location" ] ]
+                            [ div [] [ text "Previous Location" ] ]
 
                     else
                         div [] []
@@ -328,17 +378,21 @@ renderAdventureMap model adventures adventureId locationIdx =
                 nextLocation =
                     if locationIdx < Nonempty.length adventure.locations then
                         a [ href <| "/adventures/" ++ String.fromInt adventureId ++ "/locations/" ++ (String.fromInt <| locationIdx + 1) ]
-                            [ div [] [ text "Next Location ▶" ] ]
+                            [ div [] [ text "Next Location" ] ]
 
                     else
                         div [] []
+
+                indicatorFor l =
+                    div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
             in
             div [ id "adventure-map-screen" ]
                 [ renderHeader model.screen
                 , div [ id "map" ] []
                 , div [ id "locations" ]
                     [ div [ class "content" ]
-                        [ div [ class "title" ] [ text location.name ]
+                        [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
+                        , div [ class "title" ] [ text location.name ]
                         , p [ class "description" ] [ text location.description ]
                         , div [ class "information" ]
                             [ previousLocation

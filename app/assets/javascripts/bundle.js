@@ -5236,6 +5236,100 @@ var elm$core$Maybe$withDefault = F2(
 		}
 	});
 var elm$html$Html$p = _VirtualDom_node('p');
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm$html$Html$Attributes$classList = function (classes) {
+	return elm$html$Html$Attributes$class(
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(
+				elm$core$List$map,
+				elm$core$Tuple$first,
+				A2(elm$core$List$filter, elm$core$Tuple$second, classes))));
+};
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm_community$list_extra$List$Extra$find = F2(
 	function (predicate, list) {
@@ -5303,6 +5397,19 @@ var mgold$elm_nonempty_list$List$Nonempty$length = function (_n0) {
 	var xs = _n0.b;
 	return elm$core$List$length(xs) + 1;
 };
+var mgold$elm_nonempty_list$List$Nonempty$Nonempty = F2(
+	function (a, b) {
+		return {$: 'Nonempty', a: a, b: b};
+	});
+var mgold$elm_nonempty_list$List$Nonempty$map = F2(
+	function (f, _n0) {
+		var x = _n0.a;
+		var xs = _n0.b;
+		return A2(
+			mgold$elm_nonempty_list$List$Nonempty$Nonempty,
+			f(x),
+			A2(elm$core$List$map, f, xs));
+	});
 var mgold$elm_nonempty_list$List$Nonempty$toList = function (_n0) {
 	var x = _n0.a;
 	var xs = _n0.b;
@@ -5332,7 +5439,7 @@ var author$project$Main$renderAdventureMap = F4(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('◀ Previous Location')
+								elm$html$Html$text('Previous Location')
 							]))
 					])) : A2(elm$html$Html$div, _List_Nil, _List_Nil);
 			var nextLocation = (_Utils_cmp(
@@ -5351,7 +5458,7 @@ var author$project$Main$renderAdventureMap = F4(
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Next Location ▶')
+								elm$html$Html$text('Next Location')
 							]))
 					])) : A2(elm$html$Html$div, _List_Nil, _List_Nil);
 			var location = A2(
@@ -5361,6 +5468,22 @@ var author$project$Main$renderAdventureMap = F4(
 					elm_community$list_extra$List$Extra$getAt,
 					locationIdx,
 					mgold$elm_nonempty_list$List$Nonempty$toList(adventure.locations)));
+			var indicatorFor = function (l) {
+				return A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('indicator'),
+							elm$html$Html$Attributes$classList(
+							_List_fromArray(
+								[
+									_Utils_Tuple2(
+									'active',
+									_Utils_eq(l.id, locationIdx))
+								]))
+						]),
+					_List_Nil);
+			};
 			return A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -5393,6 +5516,14 @@ var author$project$Main$renderAdventureMap = F4(
 									]),
 								_List_fromArray(
 									[
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('indicators')
+											]),
+										mgold$elm_nonempty_list$List$Nonempty$toList(
+											A2(mgold$elm_nonempty_list$List$Nonempty$map, indicatorFor, adventure.locations))),
 										A2(
 										elm$html$Html$div,
 										_List_fromArray(
@@ -5673,10 +5804,6 @@ var author$project$API$maybeToDecoder = F2(
 	});
 var elm$json$Json$Decode$andThen = _Json_andThen;
 var elm$json$Json$Decode$list = _Json_decodeList;
-var mgold$elm_nonempty_list$List$Nonempty$Nonempty = F2(
-	function (a, b) {
-		return {$: 'Nonempty', a: a, b: b};
-	});
 var mgold$elm_nonempty_list$List$Nonempty$fromList = function (ys) {
 	if (ys.b) {
 		var x = ys.a;
@@ -5732,17 +5859,17 @@ var author$project$API$decodeLocations = function () {
 	var pointPartsToLatLng = function (parts) {
 		if (((parts.b && parts.b.b) && parts.b.b.b) && (!parts.b.b.b.b)) {
 			var _n1 = parts.b;
-			var latString = _n1.a;
+			var lngString = _n1.a;
 			var _n2 = _n1.b;
-			var lngString = _n2.a;
+			var latString = _n2.a;
 			return A3(
 				elm$core$Maybe$map2,
 				F2(
-					function (lat, lng) {
+					function (lng, lat) {
 						return {lat: lat, lng: lng};
 					}),
-				elm$core$String$toFloat(latString),
-				elm$core$String$toFloat(lngString));
+				elm$core$String$toFloat(lngString),
+				elm$core$String$toFloat(latString));
 		} else {
 			return elm$core$Maybe$Nothing;
 		}
@@ -6399,136 +6526,169 @@ var author$project$API$adventuresRequest = function (token) {
 var author$project$Main$UpdateAdventures = function (a) {
 	return {$: 'UpdateAdventures', a: a};
 };
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var author$project$Main$locationLatLng = F3(
+	function (remoteAdventures, id, idx) {
+		if (remoteAdventures.$ === 'Success') {
+			var adventures = remoteAdventures.a;
+			var maybeAdventure = A2(
+				elm_community$list_extra$List$Extra$find,
+				function (a) {
+					return _Utils_eq(a.id, id);
+				},
+				adventures);
+			var maybeLocation = A2(
+				elm$core$Maybe$andThen,
+				function (a) {
+					return A2(
+						elm_community$list_extra$List$Extra$getAt,
+						idx - 1,
+						mgold$elm_nonempty_list$List$Nonempty$toList(a.locations));
+				},
+				maybeAdventure);
+			return A2(
+				elm$core$Maybe$map,
+				function ($) {
+					return $.latLng;
+				},
+				maybeLocation);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$core$Maybe$destruct = F3(
+	function (_default, func, maybe) {
+		if (maybe.$ === 'Just') {
+			var a = maybe.a;
+			return func(a);
+		} else {
+			return _default;
+		}
+	});
+var elm$json$Json$Encode$float = _Json_wrap;
+var elm$json$Json$Encode$null = _Json_encodeNull;
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var author$project$Ports$updateMap = _Platform_outgoingPort(
+	'updateMap',
+	function ($) {
+		return A3(
+			elm$core$Maybe$destruct,
+			elm$json$Json$Encode$null,
+			function ($) {
+				return elm$json$Json$Encode$object(
+					_List_fromArray(
+						[
+							_Utils_Tuple2(
+							'lat',
+							elm$json$Json$Encode$float($.lat)),
+							_Utils_Tuple2(
+							'lng',
+							elm$json$Json$Encode$float($.lng))
+						]));
+			},
+			$);
+	});
 var author$project$Types$AdventureMap = F2(
 	function (a, b) {
 		return {$: 'AdventureMap', a: a, b: b};
 	});
-var elm$core$Basics$neq = _Utils_notEqual;
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var elm$core$String$toInt = _String_toInt;
-var author$project$Main$screenFromUrl = function (url) {
-	var segments = A2(
-		elm$core$List$filter,
-		function (s) {
-			return s !== '';
-		},
-		A2(elm$core$String$split, '/', url.path));
-	if (!segments.b) {
-		return author$project$Types$Home;
-	} else {
-		if ((((((segments.a === 'adventures') && segments.b.b) && segments.b.b.b) && (segments.b.b.a === 'locations')) && segments.b.b.b.b) && (!segments.b.b.b.b.b)) {
-			var _n1 = segments.b;
-			var stringId = _n1.a;
-			var _n2 = _n1.b;
-			var _n3 = _n2.b;
-			var stringIdx = _n3.a;
-			var _n4 = _Utils_Tuple2(
-				elm$core$String$toInt(stringId),
-				elm$core$String$toInt(stringIdx));
-			if ((_n4.a.$ === 'Just') && (_n4.b.$ === 'Just')) {
-				var id = _n4.a.a;
-				var idx = _n4.b.a;
-				return A2(author$project$Types$AdventureMap, id, idx);
-			} else {
-				return author$project$Types$Home;
-			}
-		} else {
-			return author$project$Types$Home;
-		}
-	}
-};
-var elm$core$Platform$Cmd$map = _Platform_map;
-var krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
 			f(x));
 	});
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$String$toInt = _String_toInt;
+var author$project$Main$screenFromUrl = F2(
+	function (remoteAdventures, url) {
+		var segments = A2(
+			elm$core$List$filter,
+			function (s) {
+				return s !== '';
+			},
+			A2(elm$core$String$split, '/', url.path));
+		var defaultLocation = {lat: -41, lng: 174};
+		if (!segments.b) {
+			return _Utils_Tuple2(
+				author$project$Types$Home,
+				author$project$Ports$updateMap(elm$core$Maybe$Nothing));
+		} else {
+			if ((((((segments.a === 'adventures') && segments.b.b) && segments.b.b.b) && (segments.b.b.a === 'locations')) && segments.b.b.b.b) && (!segments.b.b.b.b.b)) {
+				var _n1 = segments.b;
+				var stringId = _n1.a;
+				var _n2 = _n1.b;
+				var _n3 = _n2.b;
+				var stringIdx = _n3.a;
+				var _n4 = _Utils_Tuple2(
+					elm$core$String$toInt(stringId),
+					elm$core$String$toInt(stringIdx));
+				if ((_n4.a.$ === 'Just') && (_n4.b.$ === 'Just')) {
+					var id = _n4.a.a;
+					var idx = _n4.b.a;
+					return _Utils_Tuple2(
+						A2(author$project$Types$AdventureMap, id, idx),
+						A3(
+							elm$core$Basics$composeL,
+							author$project$Ports$updateMap,
+							elm$core$Maybe$Just,
+							A2(
+								elm$core$Maybe$withDefault,
+								defaultLocation,
+								A3(author$project$Main$locationLatLng, remoteAdventures, id, idx))));
+				} else {
+					return _Utils_Tuple2(
+						author$project$Types$Home,
+						author$project$Ports$updateMap(elm$core$Maybe$Nothing));
+				}
+			} else {
+				return _Utils_Tuple2(
+					author$project$Types$Home,
+					author$project$Ports$updateMap(elm$core$Maybe$Nothing));
+			}
+		}
+	});
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$map = _Platform_map;
+var krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var elm$core$Task$Perform = function (a) {
 	return {$: 'Perform', a: a};
 };
 var elm$core$Task$andThen = _Scheduler_andThen;
 var elm$core$Task$succeed = _Scheduler_succeed;
 var elm$core$Task$init = elm$core$Task$succeed(_Utils_Tuple0);
-var elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
 var elm$core$Task$map = F2(
 	function (func, taskA) {
 		return A2(
@@ -6644,19 +6804,21 @@ var krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 var krisajenkins$remotedata$RemoteData$sendRequest = elm$http$Http$send(krisajenkins$remotedata$RemoteData$fromResult);
 var author$project$Main$init = F3(
 	function (flags, url, key) {
+		var _n0 = A2(author$project$Main$screenFromUrl, krisajenkins$remotedata$RemoteData$NotAsked, url);
+		var screen = _n0.a;
+		var cmd = _n0.b;
 		return _Utils_Tuple2(
-			{
-				adventures: krisajenkins$remotedata$RemoteData$NotAsked,
-				flags: flags,
-				key: key,
-				screen: author$project$Main$screenFromUrl(url),
-				visitResult: krisajenkins$remotedata$RemoteData$NotAsked
-			},
-			A2(
-				elm$core$Platform$Cmd$map,
-				author$project$Main$UpdateAdventures,
-				krisajenkins$remotedata$RemoteData$sendRequest(
-					author$project$API$adventuresRequest(flags.token))));
+			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, flags: flags, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
+			elm$core$Platform$Cmd$batch(
+				_List_fromArray(
+					[
+						A2(
+						elm$core$Platform$Cmd$map,
+						author$project$Main$UpdateAdventures,
+						krisajenkins$remotedata$RemoteData$sendRequest(
+							author$project$API$adventuresRequest(flags.token))),
+						cmd
+					])));
 	});
 var author$project$API$logOutRequest = function (token) {
 	return elm$http$Http$request(
@@ -6676,19 +6838,6 @@ var author$project$API$logOutRequest = function (token) {
 		});
 };
 var elm$json$Json$Encode$int = _Json_wrap;
-var elm$json$Json$Encode$object = function (pairs) {
-	return _Json_wrap(
-		A3(
-			elm$core$List$foldl,
-			F2(
-				function (_n0, obj) {
-					var k = _n0.a;
-					var v = _n0.b;
-					return A3(_Json_addField, k, v, obj);
-				}),
-			_Json_emptyObject(_Utils_Tuple0),
-			pairs));
-};
 var author$project$API$encodeLocation = function (location) {
 	return elm$json$Json$Encode$object(
 		_List_fromArray(
@@ -6888,7 +7037,6 @@ var elm$url$Url$fromString = function (str) {
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var elm$core$Debug$log = _Debug_log;
-var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -6940,12 +7088,29 @@ var author$project$Main$update = F2(
 			case 'NoOp':
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'UpdateAdventures':
-				var adventures = msg.a;
+				var remoteAdventures = msg.a;
+				var cmd = function () {
+					var _n1 = model.screen;
+					if (_n1.$ === 'AdventureMap') {
+						var id = _n1.a;
+						var idx = _n1.b;
+						var _n2 = A3(author$project$Main$locationLatLng, remoteAdventures, id, idx);
+						if (_n2.$ === 'Just') {
+							var latlng = _n2.a;
+							return author$project$Ports$updateMap(
+								elm$core$Maybe$Just(latlng));
+						} else {
+							return elm$core$Platform$Cmd$none;
+						}
+					} else {
+						return elm$core$Platform$Cmd$none;
+					}
+				}();
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{adventures: adventures}),
-					elm$core$Platform$Cmd$none);
+						{adventures: remoteAdventures}),
+					cmd);
 			case 'ChangeScreen':
 				var screen = msg.a;
 				return _Utils_Tuple2(
@@ -6955,7 +7120,7 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'RequestUrl':
 				var urlRequest = msg.a;
-				var _n1 = A2(elm$core$Debug$log, 'Request URL', urlRequest);
+				var _n3 = A2(elm$core$Debug$log, 'Request URL', urlRequest);
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
 					return _Utils_Tuple2(
@@ -6972,14 +7137,15 @@ var author$project$Main$update = F2(
 				}
 			case 'ChangeUrl':
 				var url = msg.a;
-				var _n3 = A2(elm$core$Debug$log, 'Change URL', url);
+				var _n5 = A2(author$project$Main$screenFromUrl, model.adventures, url);
+				var screen = _n5.a;
+				var cmd = _n5.b;
+				var _n6 = A2(elm$core$Debug$log, 'Change URL', url);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{
-							screen: author$project$Main$screenFromUrl(url)
-						}),
-					elm$core$Platform$Cmd$none);
+						{screen: screen}),
+					cmd);
 			case 'VisitLocation':
 				var location = msg.a;
 				return _Utils_Tuple2(
@@ -7001,7 +7167,11 @@ var author$project$Main$update = F2(
 				var url = '/adventures/' + (elm$core$String$fromInt(id) + '/locations/1');
 				return _Utils_Tuple2(
 					model,
-					A2(elm$browser$Browser$Navigation$pushUrl, model.key, url));
+					elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								A2(elm$browser$Browser$Navigation$pushUrl, model.key, url)
+							])));
 			case 'LogOut':
 				return _Utils_Tuple2(
 					model,

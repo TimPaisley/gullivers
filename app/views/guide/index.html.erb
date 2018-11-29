@@ -1,8 +1,10 @@
-<%= javascript_include_tag "bundle" %>
-<div id="elm"></div>
+<% content_for :head do %>
+    <%= javascript_include_tag "bundle" %>
+    <%= javascript_include_tag "map" %>
+<% end %>
 
 <script type="text/javascript">
-  var elm = document.getElementById('elm');
-  var flags = {token: "<%= form_authenticity_token %>"}
-  Elm.Main.init({node: elm, flags: flags});
+    var flags = {token: "<%= form_authenticity_token %>"}
+    window.app = Elm.Main.init({flags: flags});
 </script>
+

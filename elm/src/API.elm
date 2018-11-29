@@ -95,10 +95,10 @@ decodeLocations =
         pointPartsToLatLng : List String -> Maybe LatLng
         pointPartsToLatLng parts =
             case parts of
-                _ :: latString :: lngString :: [] ->
-                    Maybe.map2 (\lat lng -> { lat = lat, lng = lng })
-                        (String.toFloat latString)
+                _ :: lngString :: latString :: [] ->
+                    Maybe.map2 (\lng lat -> { lng = lng, lat = lat })
                         (String.toFloat lngString)
+                        (String.toFloat latString)
 
                 _ ->
                     Nothing
