@@ -373,7 +373,7 @@ renderAdventureMap model adventures adventureId locationIdx =
                             [ div [] [ text "Previous Location" ] ]
 
                     else
-                        div [] []
+                        a [ class "disabled" ] [ div [] [ text "Previous Location" ] ]
 
                 nextLocation =
                     if locationIdx < Nonempty.length adventure.locations then
@@ -381,7 +381,7 @@ renderAdventureMap model adventures adventureId locationIdx =
                             [ div [] [ text "Next Location" ] ]
 
                     else
-                        div [] []
+                        a [ class "disabled" ] [ div [] [ text "Next Location" ] ]
 
                 indicatorFor l =
                     div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
@@ -394,7 +394,7 @@ renderAdventureMap model adventures adventureId locationIdx =
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
                         , p [ class "description" ] [ text location.description ]
-                        , div [ class "information" ]
+                        , div [ class "buttons" ]
                             [ previousLocation
                             , nextLocation
                             ]

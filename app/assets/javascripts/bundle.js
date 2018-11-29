@@ -5441,7 +5441,22 @@ var author$project$Main$renderAdventureMap = F4(
 							[
 								elm$html$Html$text('Previous Location')
 							]))
-					])) : A2(elm$html$Html$div, _List_Nil, _List_Nil);
+					])) : A2(
+				elm$html$Html$a,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('disabled')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Previous Location')
+							]))
+					]));
 			var nextLocation = (_Utils_cmp(
 				locationIdx,
 				mgold$elm_nonempty_list$List$Nonempty$length(adventure.locations)) < 0) ? A2(
@@ -5460,7 +5475,22 @@ var author$project$Main$renderAdventureMap = F4(
 							[
 								elm$html$Html$text('Next Location')
 							]))
-					])) : A2(elm$html$Html$div, _List_Nil, _List_Nil);
+					])) : A2(
+				elm$html$Html$a,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('disabled')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Next Location')
+							]))
+					]));
 			var location = A2(
 				elm$core$Maybe$withDefault,
 				mgold$elm_nonempty_list$List$Nonempty$head(adventure.locations),
@@ -5548,7 +5578,7 @@ var author$project$Main$renderAdventureMap = F4(
 										elm$html$Html$div,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$class('information')
+												elm$html$Html$Attributes$class('buttons')
 											]),
 										_List_fromArray(
 											[previousLocation, nextLocation]))
