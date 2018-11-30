@@ -7,8 +7,6 @@ class CreateLocations < ActiveRecord::Migration[5.2]
 
       t.text :name, null: false
       t.text :description, null: false, default: ""
-      t.text :image_url, null: false
-      t.integer :reward, null: false
 
       t.timestamps
     end

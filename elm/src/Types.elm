@@ -11,6 +11,7 @@ type Screen
 type alias Adventure =
     { id : Int
     , name : String
+    , image : String
     , description : String
     , locations : Nonempty Location
     , badgeUrl : String
@@ -23,8 +24,6 @@ type alias Location =
     { id : Int
     , name : String
     , description : String
-    , imageUrl : String
-    , reward : Int
     , latLng : LatLng
     }
 

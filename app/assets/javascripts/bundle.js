@@ -5598,7 +5598,6 @@ var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var author$project$Main$renderAdventureCard = F2(
 	function (idx, adventure) {
 		var wheelchairInfo = adventure.wheelchair_accessible ? 'Wheelchair Accessible' : '';
-		var imageUrl = 'https://unsplash.it/800/600?image=' + elm$core$String$fromInt(70 + idx);
 		return A2(
 			elm$html$Html$li,
 			_List_fromArray(
@@ -5622,7 +5621,7 @@ var author$project$Main$renderAdventureCard = F2(
 							_List_fromArray(
 								[
 									elm$html$Html$Attributes$class('image'),
-									A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (imageUrl + ')'))
+									A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (adventure.image + ')'))
 								]),
 							_List_Nil),
 							A2(
@@ -5883,7 +5882,7 @@ var elm$core$String$replace = F3(
 var elm$core$String$toFloat = _String_toFloat;
 var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
-var elm$json$Json$Decode$map6 = _Json_map6;
+var elm$json$Json$Decode$map4 = _Json_map4;
 var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$API$decodeLocations = function () {
 	var pointPartsToLatLng = function (parts) {
@@ -5904,9 +5903,9 @@ var author$project$API$decodeLocations = function () {
 			return elm$core$Maybe$Nothing;
 		}
 	};
-	var makeLocation = F6(
-		function (id, name, description, imageUrl, reward, latLng) {
-			return {description: description, id: id, imageUrl: imageUrl, latLng: latLng, name: name, reward: reward};
+	var makeLocation = F4(
+		function (id, name, description, latLng) {
+			return {description: description, id: id, latLng: latLng, name: name};
 		});
 	var decodePointString = function (s) {
 		return A2(
@@ -5925,29 +5924,28 @@ var author$project$API$decodeLocations = function () {
 			elm$json$Json$Decode$map,
 			A2(elm$core$Basics$composeR, decodePointString, pointPartsToLatLng),
 			elm$json$Json$Decode$string));
-	var decodeLocation = A7(
-		elm$json$Json$Decode$map6,
+	var decodeLocation = A5(
+		elm$json$Json$Decode$map4,
 		makeLocation,
 		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 		A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
 		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
-		A2(elm$json$Json$Decode$field, 'image_url', elm$json$Json$Decode$string),
-		A2(elm$json$Json$Decode$field, 'reward', elm$json$Json$Decode$int),
 		A2(elm$json$Json$Decode$field, 'geometry', decodeGeometry));
 	return author$project$API$decodeNonempty(decodeLocation);
 }();
 var elm$json$Json$Decode$bool = _Json_decodeBool;
-var elm$json$Json$Decode$map7 = _Json_map7;
+var elm$json$Json$Decode$map8 = _Json_map8;
 var author$project$API$decodeAdventure = function () {
-	var makeAdventure = F7(
-		function (id, name, description, locations, badgeUrl, difficulty, wheelchair_accessible) {
-			return {badgeUrl: badgeUrl, description: description, difficulty: difficulty, id: id, locations: locations, name: name, wheelchair_accessible: wheelchair_accessible};
+	var makeAdventure = F8(
+		function (id, name, image, description, locations, badgeUrl, difficulty, wheelchair_accessible) {
+			return {badgeUrl: badgeUrl, description: description, difficulty: difficulty, id: id, image: image, locations: locations, name: name, wheelchair_accessible: wheelchair_accessible};
 		});
-	return A8(
-		elm$json$Json$Decode$map7,
+	return A9(
+		elm$json$Json$Decode$map8,
 		makeAdventure,
 		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
 		A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
+		A2(elm$json$Json$Decode$field, 'image', elm$json$Json$Decode$string),
 		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
 		A2(elm$json$Json$Decode$field, 'locations', author$project$API$decodeLocations),
 		A2(elm$json$Json$Decode$field, 'badge_url', elm$json$Json$Decode$string),

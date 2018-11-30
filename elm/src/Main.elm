@@ -329,9 +329,6 @@ renderAdventures adventures =
 renderAdventureCard : Int -> Adventure -> Html Msg
 renderAdventureCard idx adventure =
     let
-        imageUrl =
-            "https://unsplash.it/800/600?image=" ++ String.fromInt (70 + idx)
-
         wheelchairInfo =
             if adventure.wheelchair_accessible then
                 "Wheelchair Accessible"
@@ -341,7 +338,7 @@ renderAdventureCard idx adventure =
     in
     li [ class "card-item" ]
         [ div [ class "card", onClick <| ViewAdventureMap adventure.id ]
-            [ div [ class "image", style "background-image" ("url(" ++ imageUrl ++ ")") ] []
+            [ div [ class "image", style "background-image" ("url(" ++ adventure.image ++ ")") ] []
             , div [ class "content" ]
                 [ div [ class "title" ] [ text adventure.name ]
                 , p [ class "description" ] [ text adventure.description ]

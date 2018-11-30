@@ -3,6 +3,7 @@ class CreateAdventures < ActiveRecord::Migration[5.2]
     create_table :adventures do |t|
 
         t.text :name, null: false
+        t.text :image, null: false
         t.text :description, null: false, default: ""
         t.text :badge_url, null: false
         t.integer :difficulty, null: false

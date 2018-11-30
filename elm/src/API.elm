@@ -47,9 +47,10 @@ decodeAdventures =
 decodeAdventure : Decoder Adventure
 decodeAdventure =
     let
-        makeAdventure id name description locations badgeUrl difficulty wheelchair_accessible =
+        makeAdventure id name image description locations badgeUrl difficulty wheelchair_accessible =
             { id = id
             , name = name
+            , image = image
             , description = description
             , locations = locations
             , badgeUrl = badgeUrl
@@ -57,9 +58,10 @@ decodeAdventure =
             , wheelchair_accessible = wheelchair_accessible
             }
     in
-    Decode.map7 makeAdventure
+    Decode.map8 makeAdventure
         (Decode.field "id" Decode.int)
         (Decode.field "name" Decode.string)
+        (Decode.field "image" Decode.string)
         (Decode.field "description" Decode.string)
         (Decode.field "locations" decodeLocations)
         (Decode.field "badge_url" Decode.string)
@@ -71,20 +73,16 @@ decodeLocations : Decoder (Nonempty Location)
 decodeLocations =
     let
         decodeLocation =
-            Decode.map6 makeLocation
+            Decode.map4 makeLocation
                 (Decode.field "id" Decode.int)
                 (Decode.field "name" Decode.string)
                 (Decode.field "description" Decode.string)
-                (Decode.field "image_url" Decode.string)
-                (Decode.field "reward" Decode.int)
                 (Decode.field "geometry" decodeGeometry)
 
-        makeLocation id name description imageUrl reward latLng =
+        makeLocation id name description latLng =
             { id = id
             , name = name
             , description = description
-            , imageUrl = imageUrl
-            , reward = reward
             , latLng = latLng
             }
 

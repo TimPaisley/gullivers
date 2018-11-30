@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_023950) do
 
   create_table "adventures", force: :cascade do |t|
     t.text "name", null: false
+    t.text "image", null: false
     t.text "description", default: "", null: false
     t.text "badge_url", null: false
     t.integer "difficulty", null: false
@@ -39,8 +40,6 @@ ActiveRecord::Schema.define(version: 2018_11_20_023950) do
     t.geography "geometry", limit: {:srid=>4326, :type=>"st_point", :geographic=>true}, null: false
     t.text "name", null: false
     t.text "description", default: "", null: false
-    t.text "image_url", null: false
-    t.integer "reward", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["geometry"], name: "index_locations_on_geometry", using: :gist
