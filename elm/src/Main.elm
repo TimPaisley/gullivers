@@ -234,41 +234,6 @@ renderLoadingScreen =
     text "LOADING..."
 
 
-renderHeader : Screen -> Html Msg
-renderHeader screen =
-    let
-        content =
-            case screen of
-                Home ->
-                    [ div []
-                        [ div [] [ text "Gulliver's Guide to Wellington" ]
-                        , h1 [] [ text "Adventures" ]
-                        ]
-                    , renderProfile
-                    ]
-
-                AdventureMap id idx ->
-                    [ div []
-                        [ a [ href "/" ] [ text "← Back to Adventures" ]
-                        , h1 [] [ text ("Adventure " ++ String.fromInt id) ]
-                        ]
-                    , div [ class "set-size" ]
-                        [ div [ class "pie-wrapper progress-80" ]
-                            [ span [ class "label" ]
-                                [ text "80"
-                                , span [ class "smaller" ] [ text "%" ]
-                                ]
-                            , div [ class "pie" ]
-                                [ div [ class "left-side half-circle" ] []
-                                , div [ class "right-side half-circle" ] []
-                                ]
-                            ]
-                        ]
-                    ]
-    in
-    div [ class "header" ] content
-
-
 renderFooter : Html Msg
 renderFooter =
     div [ class "footer" ]
@@ -296,28 +261,28 @@ renderProfile =
                 ]
             ]
         , div [ class "section", onClick LogOut ]
-            [ text "Junior Adventurer"
-            , h2 [] [ text "Development" ]
+            [ h2 [] [ text "Development" ]
+            , text "Junior Adventurer"
             ]
         ]
 
 
 renderHomeScreen : List Adventure -> Html Msg
 renderHomeScreen adventures =
+    let
+        header =
+            div [ class "header" ]
+                [ div [ class "title" ]
+                    [ h1 [] [ text "Gulliver's Guide to Wellington" ]
+                    , div [] [ text "All Adventures" ]
+                    ]
+                , renderProfile
+                ]
+    in
     div []
-        [ renderHeader Home
-        , renderFilters
+        [ header
         , renderAdventures adventures
         , renderFooter
-        ]
-
-
-renderFilters : Html Msg
-renderFilters =
-    div [ class "filters" ]
-        [ div [] [ text "Location" ]
-        , div [] [ text "Difficulty" ]
-        , div [] [ text "Accessibility" ]
         ]
 
 
@@ -360,6 +325,17 @@ renderAdventureMap model adventures adventureId locationIdx =
     case maybeAdventure of
         Just adventure ->
             let
+                header =
+                    div [ class "header" ]
+                        [ a [ href "/", class "back" ] [ text "◀" ]
+                        , div [ class "title" ]
+                            [ h1 [] [ text adventure.name ]
+                            , text "Walkway"
+                            ]
+                        , div [ class "side" ]
+                            [ text "?" ]
+                        ]
+
                 location =
                     ListX.getAt locationIdx (Nonempty.toList adventure.locations)
                         |> Maybe.withDefault (Nonempty.head adventure.locations)
@@ -384,7 +360,7 @@ renderAdventureMap model adventures adventureId locationIdx =
                     div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
             in
             div [ id "adventure-map-screen" ]
-                [ renderHeader model.screen
+                [ header
                 , div [ id "map" ] []
                 , div [ id "locations" ]
                     [ div [ class "content" ]

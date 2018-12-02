@@ -111,16 +111,31 @@ h1 {
     margin: 10px 20px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-
-    h1 {
-        text-align: left;
-        margin: 0;
-    }
 
     > div {
         margin-bottom: 10px;
+    }
+
+    .back {
+        flex: 0 0 auto;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-decoration: none;
+    }
+
+    .title {
+        flex: 1 0 auto;
+
+        h1 {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+    }
+
+    .side {
+        flex: 0 0 auto;
     }
 }
 
@@ -198,8 +213,13 @@ h1 {
     flex-direction: column;
     height: 100%;
 
-    div {
+    > div {
         flex: 0 0 auto;
+    }
+
+    .header {
+        margin-left: 0;
+        margin-right: 0;
     }
 
     #map {
@@ -259,6 +279,7 @@ h1 {
     }
 
     .buttons {
+        flex: 0 0 auto;
         display: flex;
         justify-content: stretch;
         font-size: 0.8rem;
