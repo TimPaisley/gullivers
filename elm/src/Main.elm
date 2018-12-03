@@ -337,7 +337,7 @@ renderAdventureMap model adventures adventureId locationIdx =
                         ]
 
                 location =
-                    ListX.getAt locationIdx (Nonempty.toList adventure.locations)
+                    ListX.getAt (locationIdx - 1) (Nonempty.toList adventure.locations)
                         |> Maybe.withDefault (Nonempty.head adventure.locations)
 
                 previousLocation =

@@ -5260,7 +5260,7 @@ var author$project$Main$renderAdventureMap = F4(
 				mgold$elm_nonempty_list$List$Nonempty$head(adventure.locations),
 				A2(
 					elm_community$list_extra$List$Extra$getAt,
-					locationIdx,
+					locationIdx - 1,
 					mgold$elm_nonempty_list$List$Nonempty$toList(adventure.locations)));
 			var indicatorFor = function (l) {
 				return A2(
