@@ -25,22 +25,30 @@ function onElementCreate(id, callback) {
 document.addEventListener('DOMContentLoaded', function () {
     var map;
 
-    window.app.ports.updateMap.subscribe(function (newLocation) {
-        console.log (map, newLocation);
-        if (newLocation) {
+    window.app.ports.updateMap.subscribe(function (options) {
+        console.log (map, options);
+        if (options) {
             if (!map) {
                 var stopObserving = onElementCreate('map', function() {
                     map = new mapboxgl.Map({
                         container: 'map',
-                        style: 'mapbox://styles/mapbox/streets-v9',
-                        center: newLocation,
-                        zoom: 12
+                        style: 'mapbox://styles/timpaisleywcc/cjp2dq5g420mw2sqimr5unpup',
+                        center: options.focus,
+                        zoom: 13
                     });
+
+                    if (options.locations) {
+                        options.locations.forEach(function (loc) {
+                            new mapboxgl.Marker({ color: "#65a384" })
+                                .setLngLat([loc.lng, loc.lat])
+                                .addTo(map);
+                        });
+                    }
 
                     stopObserving();
                 });
             } else {
-                map.panTo(newLocation);
+                map.panTo(options.focus);
             }
                     
         } else {

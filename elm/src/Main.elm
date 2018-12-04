@@ -87,10 +87,12 @@ screenFromUrl remoteAdventures url =
         [ "adventures", stringId, "locations", stringIdx ] ->
             case ( String.toInt stringId, String.toInt stringIdx ) of
                 ( Just id, Just idx ) ->
-                    ( AdventureMap id idx
-                    , (Ports.updateMap << Just) <|
-                        Maybe.withDefault defaultLocation <|
+                    let
+                        focus =
                             locationLatLng remoteAdventures id idx
+                    in
+                    ( AdventureMap id idx
+                    , Ports.updateMap (mapOptions remoteAdventures id idx)
                     )
 
                 _ ->
@@ -98,6 +100,27 @@ screenFromUrl remoteAdventures url =
 
         _ ->
             ( Home, Ports.updateMap Nothing )
+
+
+mapOptions : WebData (List Adventure) -> Int -> Int -> Maybe Ports.MapOptions
+mapOptions remoteAdventures id idx =
+    case remoteAdventures of
+        Success adventures ->
+            case ListX.find (\a -> a.id == id) adventures of
+                Just adventure ->
+                    Just
+                        { elementID = "map"
+                        , focus = locationLatLng remoteAdventures id idx
+                        , locations =
+                            Nonempty.toList <|
+                                Nonempty.map .latLng adventure.locations
+                        }
+
+                Nothing ->
+                    Nothing
+
+        _ ->
+            Nothing
 
 
 locationLatLng : WebData (List Adventure) -> Int -> Int -> Maybe LatLng
@@ -131,7 +154,7 @@ update msg model =
                         AdventureMap id idx ->
                             case locationLatLng remoteAdventures id idx of
                                 Just latlng ->
-                                    Ports.updateMap <| Just latlng
+                                    Ports.updateMap (mapOptions remoteAdventures id idx)
 
                                 _ ->
                                     Cmd.none
