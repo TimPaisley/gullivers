@@ -35,7 +35,7 @@ $label-font-size-redo: $default-size * 3;
 }
 
 .set-size {
-  font-size: 3em;
+  font-size: 2em;
 }
 
 .pie-wrapper {
@@ -52,7 +52,7 @@ $label-font-size-redo: $default-size * 3;
 
     .half-circle {
       @include size(100%, 100%);
-      border: ($default-size / 10) solid #3498db;
+      border: ($default-size / 8) solid #3498db;
       border-radius: 50%;
       clip: rect(0, $default-size / 2, $default-size, 0);
       left: 0;
@@ -64,7 +64,7 @@ $label-font-size-redo: $default-size * 3;
   .label {
     border-radius: 50%;
     bottom: $label-font-size-redo / 10;
-    color: #999;
+    color: #696969;
     cursor: default;
     display: block;
     font-size: $label-font-size;
@@ -84,6 +84,6 @@ $label-font-size-redo: $default-size * 3;
   }
 
   &.progress-80 {
-    @include draw-progress(80, #999);
+    @include draw-progress(80, #696969);
   }
 }

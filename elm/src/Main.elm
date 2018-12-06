@@ -262,20 +262,17 @@ renderFooter =
     div [ class "footer" ]
         [ a [ href "https://github.com/timpaisley/gullivers", target "_blank" ]
             [ div [] [ text "Made using Gulliver's Guide" ] ]
-        , div [] [ text "About" ]
-        , div [] [ text "Legal" ]
-        , div [] [ text "Contact" ]
         ]
 
 
 renderProfile : Html Msg
 renderProfile =
-    div [ class "profile" ]
+    div [ class "card vertical profile" ]
         [ div [ class "section set-size" ]
             [ div [ class "pie-wrapper progress-80" ]
                 [ span [ class "label" ]
-                    [ text "8"
-                    , span [ class "smaller" ] [ text "m" ]
+                    [ text "80"
+                    , span [ class "smaller" ] [ text "%" ]
                     ]
                 , div [ class "pie" ]
                     [ div [ class "left-side half-circle" ] []
@@ -283,10 +280,12 @@ renderProfile =
                     ]
                 ]
             ]
-        , div [ class "section", onClick LogOut ]
-            [ h2 [] [ text "Development" ]
-            , text "Junior Adventurer"
+        , div [ class "section main" ]
+            [ div [ class "title" ] [ text "Development" ]
+            , div [ class "subtitle" ] [ text "Junior Adventurer" ]
             ]
+        , div [ class "section", onClick LogOut ]
+            [ text "x" ]
         ]
 
 
@@ -295,9 +294,9 @@ renderHomeScreen adventures =
     let
         header =
             div [ class "header" ]
-                [ div [ class "title" ]
-                    [ h1 [] [ text "Gulliver's Guide to Wellington" ]
-                    , div [] [ text "All Adventures" ]
+                [ div [ class "brand logo" ]
+                    [ div [ class "title" ] [ text "Gulliver's Guide" ]
+                    , div [ class "subtitle" ] [ text "to Wellington" ]
                     ]
                 , renderProfile
                 ]
@@ -311,7 +310,10 @@ renderHomeScreen adventures =
 
 renderAdventures : List Adventure -> Html Msg
 renderAdventures adventures =
-    ul [ class "cards" ] (List.indexedMap renderAdventureCard adventures)
+    div []
+        [ h3 [] [ text "All Adventures" ]
+        , ul [ class "cards" ] (List.indexedMap renderAdventureCard adventures)
+        ]
 
 
 renderAdventureCard : Int -> Adventure -> Html Msg
@@ -323,10 +325,14 @@ renderAdventureCard idx adventure =
 
             else
                 ""
+
+        fill =
+            toFloat adventure.difficulty / 5 * 100
     in
     li [ class "card-item" ]
         [ div [ class "card", onClick <| ViewAdventureMap adventure.id ]
             [ div [ class "image", style "background-image" ("url(" ++ adventure.image ++ ")") ] []
+            , div [ class "loading-bar" ] [ div [ class "fill", style "width" (String.fromFloat fill ++ "%") ] [] ]
             , div [ class "content" ]
                 [ div [ class "title" ] [ text adventure.name ]
                 , p [ class "description" ] [ text adventure.description ]
@@ -351,9 +357,9 @@ renderAdventureMap model adventures adventureId locationIdx =
                 header =
                     div [ class "header" ]
                         [ a [ href "/", class "back" ] [ text "◀" ]
-                        , div [ class "title" ]
-                            [ h1 [] [ text adventure.name ]
-                            , text "Walkway"
+                        , div [ class "brand" ]
+                            [ div [ class "title" ] [ text adventure.name ]
+                            , div [ class "subtitle" ] [ text "Walkway" ]
                             ]
                         , div [ class "side" ]
                             [ text "?" ]

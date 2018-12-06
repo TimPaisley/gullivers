@@ -10,7 +10,7 @@
 
     .card-item {
         display: flex;
-        padding: 1rem;
+        padding: 0.5rem 0.25rem;
 
         @media (min-width: 40rem) {
             width: 50%;
@@ -31,6 +31,10 @@
     overflow: hidden;
 
     cursor: pointer;
+
+    &.vertical {
+        flex-direction: row;
+    }
 
     &:hover {
         .image {

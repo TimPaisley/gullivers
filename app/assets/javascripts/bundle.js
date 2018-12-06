@@ -4981,7 +4981,6 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$p = _VirtualDom_node('p');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
@@ -5301,18 +5300,30 @@ var author$project$Main$renderAdventureMap = F4(
 						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('title')
+								elm$html$Html$Attributes$class('brand')
 							]),
 						_List_fromArray(
 							[
 								A2(
-								elm$html$Html$h1,
-								_List_Nil,
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('title')
+									]),
 								_List_fromArray(
 									[
 										elm$html$Html$text(adventure.name)
 									])),
-								elm$html$Html$text('Walkway')
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('subtitle')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Walkway')
+									]))
 							])),
 						A2(
 						elm$html$Html$div,
@@ -5403,6 +5414,7 @@ var author$project$Main$renderAdventureMap = F4(
 var author$project$Main$ViewAdventureMap = function (a) {
 	return {$: 'ViewAdventureMap', a: a};
 };
+var elm$core$String$fromFloat = _String_fromNumber;
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
@@ -5426,6 +5438,7 @@ var elm$html$Html$Events$onClick = function (msg) {
 var author$project$Main$renderAdventureCard = F2(
 	function (idx, adventure) {
 		var wheelchairInfo = adventure.wheelchair_accessible ? 'Wheelchair Accessible' : '';
+		var fill = (adventure.difficulty / 5) * 100;
 		return A2(
 			elm$html$Html$li,
 			_List_fromArray(
@@ -5452,6 +5465,26 @@ var author$project$Main$renderAdventureCard = F2(
 									A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (adventure.image + ')'))
 								]),
 							_List_Nil),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('loading-bar')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('fill'),
+											A2(
+											elm$html$Html$Attributes$style,
+											'width',
+											elm$core$String$fromFloat(fill) + '%')
+										]),
+									_List_Nil)
+								])),
 							A2(
 							elm$html$Html$div,
 							_List_fromArray(
@@ -5508,15 +5541,29 @@ var author$project$Main$renderAdventureCard = F2(
 						]))
 				]));
 	});
+var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$renderAdventures = function (adventures) {
 	return A2(
-		elm$html$Html$ul,
+		elm$html$Html$div,
+		_List_Nil,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$class('cards')
-			]),
-		A2(elm$core$List$indexedMap, author$project$Main$renderAdventureCard, adventures));
+				A2(
+				elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('All Adventures')
+					])),
+				A2(
+				elm$html$Html$ul,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('cards')
+					]),
+				A2(elm$core$List$indexedMap, author$project$Main$renderAdventureCard, adventures))
+			]));
 };
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$renderFooter = A2(
@@ -5543,37 +5590,15 @@ var author$project$Main$renderFooter = A2(
 						[
 							elm$html$Html$text('Made using Gulliver\'s Guide')
 						]))
-				])),
-			A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('About')
-				])),
-			A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('Legal')
-				])),
-			A2(
-			elm$html$Html$div,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('Contact')
 				]))
 		]));
 var author$project$Main$LogOut = {$: 'LogOut'};
-var elm$html$Html$h2 = _VirtualDom_node('h2');
 var elm$html$Html$span = _VirtualDom_node('span');
 var author$project$Main$renderProfile = A2(
 	elm$html$Html$div,
 	_List_fromArray(
 		[
-			elm$html$Html$Attributes$class('profile')
+			elm$html$Html$Attributes$class('card vertical profile')
 		]),
 	_List_fromArray(
 		[
@@ -5601,7 +5626,7 @@ var author$project$Main$renderProfile = A2(
 								]),
 							_List_fromArray(
 								[
-									elm$html$Html$text('8'),
+									elm$html$Html$text('80'),
 									A2(
 									elm$html$Html$span,
 									_List_fromArray(
@@ -5610,7 +5635,7 @@ var author$project$Main$renderProfile = A2(
 										]),
 									_List_fromArray(
 										[
-											elm$html$Html$text('m')
+											elm$html$Html$text('%')
 										]))
 								])),
 							A2(
@@ -5642,19 +5667,41 @@ var author$project$Main$renderProfile = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
+					elm$html$Html$Attributes$class('section main')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('title')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Development')
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('subtitle')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Junior Adventurer')
+						]))
+				])),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
 					elm$html$Html$Attributes$class('section'),
 					elm$html$Html$Events$onClick(author$project$Main$LogOut)
 				]),
 			_List_fromArray(
 				[
-					A2(
-					elm$html$Html$h2,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text('Development')
-						])),
-					elm$html$Html$text('Junior Adventurer')
+					elm$html$Html$text('x')
 				]))
 		]));
 var author$project$Main$renderHomeScreen = function (adventures) {
@@ -5670,23 +5717,29 @@ var author$project$Main$renderHomeScreen = function (adventures) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('title')
+						elm$html$Html$Attributes$class('brand logo')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						elm$html$Html$h1,
-						_List_Nil,
+						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$text('Gulliver\'s Guide to Wellington')
+								elm$html$Html$Attributes$class('title')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Gulliver\'s Guide')
 							])),
 						A2(
 						elm$html$Html$div,
-						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('All Adventures')
+								elm$html$Html$Attributes$class('subtitle')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('to Wellington')
 							]))
 					])),
 				author$project$Main$renderProfile

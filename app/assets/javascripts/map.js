@@ -37,6 +37,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         zoom: 13
                     });
 
+                    map.addControl(new mapboxgl.GeolocateControl({
+                        positionOptions: {
+                            enableHighAccuracy: true
+                        },
+                        trackUserLocation: true
+                    }));
+
                     if (options.locations) {
                         options.locations.forEach(function (loc) {
                             new mapboxgl.Marker({ color: "#65a384" })
