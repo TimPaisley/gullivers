@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var stopObserving = onElementCreate('map', function() {
                     map = new mapboxgl.Map({
                         container: 'map',
-                        style: 'mapbox://styles/timpaisleywcc/cjp2dq5g420mw2sqimr5unpup',
+                        style: 'mapbox://styles/timpaisleywcc/cjpcdf5taanva2rju1u7luuyo',
                         center: options.focus,
                         zoom: 13
                     });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (options.locations) {
                         options.locations.forEach(function (loc) {
-                            new mapboxgl.Marker({ color: "#65a384" })
+                            new mapboxgl.Marker({ color: "#FFCC00" })
                                 .setLngLat([loc.lng, loc.lat])
                                 .addTo(map);
                         });

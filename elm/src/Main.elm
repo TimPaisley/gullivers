@@ -267,7 +267,7 @@ renderFooter =
 
 renderProfile : Html Msg
 renderProfile =
-    div [ class "card vertical profile" ]
+    div [ class "vertical-bar" ]
         [ div [ class "section set-size" ]
             [ div [ class "pie-wrapper progress-80" ]
                 [ span [ class "label" ]
@@ -310,8 +310,21 @@ renderHomeScreen adventures =
 
 renderAdventures : List Adventure -> Html Msg
 renderAdventures adventures =
+    let
+        bar =
+            div [ class "vertical-bar" ]
+                [ div [ class "section main" ]
+                    [ div [ class "title" ] [ text "Adventures" ]
+                    , div [ class "subtitle" ] [ text "Showing All" ]
+                    ]
+                , div [ class "section" ]
+                    [ text "?" ]
+                , div [ class "section" ]
+                    [ text "?" ]
+                ]
+    in
     div []
-        [ h3 [] [ text "All Adventures" ]
+        [ bar
         , ul [ class "cards" ] (List.indexedMap renderAdventureCard adventures)
         ]
 
@@ -332,7 +345,7 @@ renderAdventureCard idx adventure =
     li [ class "card-item" ]
         [ div [ class "card", onClick <| ViewAdventureMap adventure.id ]
             [ div [ class "image", style "background-image" ("url(" ++ adventure.image ++ ")") ] []
-            , div [ class "loading-bar" ] [ div [ class "fill", style "width" (String.fromFloat fill ++ "%") ] [] ]
+            , div [ class "progress-bar" ] [ div [ class "fill", style "width" (String.fromFloat fill ++ "%") ] [] ]
             , div [ class "content" ]
                 [ div [ class "title" ] [ text adventure.name ]
                 , p [ class "description" ] [ text adventure.description ]

@@ -1,8 +1,15 @@
+// $highlight: #696969;
+// $text-color: #999999;
+// $background: #f0f0f0;
+
+$highlight: #ffcc00;
+$text-color: #ffffff;
+$background: #3c3c3b;
+
 @mixin heading {
     font-family: 'Helvetica', sans-serif;
     font-size: 1rem;
     margin: 0;
-    color: #696969;
     font-weight: 300;
 }
 
@@ -18,11 +25,11 @@ body {
 }
 
 html {
-    background-color: #f0f0f0;
+    background-color: $background;
 }
 
 body {
-    color: #999;
+    color: $text-color;
     font-family: 'Roboto','Helvetica Neue', Helvetica, Arial, sans-serif;
     font-style: normal;
     font-weight: 400;
@@ -139,6 +146,7 @@ h1, h2, h3 {
 
         .title {
             @include heading;
+            color: $highlight;
             font-size: 1.2rem;
             font-weight: 600;
         }
@@ -151,6 +159,7 @@ h1, h2, h3 {
         &.logo {
             .title {
                 @include heading;
+                color: white;
                 font-family: 'Dancing Script', cursive;
                 font-size: 3rem;
                 font-weight: 600;
@@ -159,7 +168,7 @@ h1, h2, h3 {
             }
     
             .subtitle {
-                color: #696969;
+                color: $highlight;
                 font-weight: 600;
                 font-style: italic;
                 padding-left: 20px;
@@ -191,7 +200,7 @@ h1, h2, h3 {
     }
 }
 
-.profile {
+.vertical-bar {
     flex: 1 0 auto;
     display: flex;
     justify-content: space-between;
@@ -216,7 +225,7 @@ h1, h2, h3 {
 
         .subtitle {
             font-size: 0.8rem;
-            opacity: 0.8;
+            opacity: 0.5;
         }
     }
 }
@@ -255,7 +264,7 @@ h1, h2, h3 {
 
     #locations {
         height: 40%;
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0.1);
         display: flex;
 
         border-bottom-left-radius: 0.25rem;
@@ -281,7 +290,7 @@ h1, h2, h3 {
     .title {
         @include heading;
         font-size: 1.2rem;
-        text-align: center;
+        text-align: left;
     }
 
     .description {
@@ -307,8 +316,8 @@ h1, h2, h3 {
             flex: 1;
             padding: 10px;
             text-decoration: none;
-            border: 1px solid #696969;
-            color: #696969;
+            border: 1px solid $highlight;
+            color: $highlight;
             text-align: center;
             margin: 0 5px;
 
@@ -330,24 +339,24 @@ h1, h2, h3 {
         width: 8px;
         height: 8px;
         margin: 0 5px;
-        border: 1px solid #696969;
+        border: 1px solid $highlight;
         border-radius: 50%;
 
         &.active {
-            background-color: #696969;
+            background-color: $highlight;
         }
     }
 }
 
-.loading-bar {
+.progress-bar {
     height: 5px;
-    background-color: #EEE;
+    background-color: $background;
     position: relative;
 
     .fill {
         position: absolute;
         height: 100%;
         left: 0;
-        background-color: #696969;
+        background-color: $highlight;
     }
 }

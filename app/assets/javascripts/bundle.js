@@ -5469,7 +5469,7 @@ var author$project$Main$renderAdventureCard = F2(
 							elm$html$Html$div,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('loading-bar')
+									elm$html$Html$Attributes$class('progress-bar')
 								]),
 							_List_fromArray(
 								[
@@ -5541,21 +5541,72 @@ var author$project$Main$renderAdventureCard = F2(
 						]))
 				]));
 	});
-var elm$html$Html$h3 = _VirtualDom_node('h3');
 var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$renderAdventures = function (adventures) {
+	var bar = A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('vertical-bar')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('section main')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('title')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Adventures')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('subtitle')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Showing All')
+							]))
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('section')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('?')
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('section')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('?')
+					]))
+			]));
 	return A2(
 		elm$html$Html$div,
 		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						elm$html$Html$text('All Adventures')
-					])),
+				bar,
 				A2(
 				elm$html$Html$ul,
 				_List_fromArray(
@@ -5598,7 +5649,7 @@ var author$project$Main$renderProfile = A2(
 	elm$html$Html$div,
 	_List_fromArray(
 		[
-			elm$html$Html$Attributes$class('card vertical profile')
+			elm$html$Html$Attributes$class('vertical-bar')
 		]),
 	_List_fromArray(
 		[

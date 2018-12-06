@@ -64,7 +64,7 @@ $label-font-size-redo: $default-size * 3;
   .label {
     border-radius: 50%;
     bottom: $label-font-size-redo / 10;
-    color: #696969;
+    color: #FFF;
     cursor: default;
     display: block;
     font-size: $label-font-size;
@@ -84,6 +84,6 @@ $label-font-size-redo: $default-size * 3;
   }
 
   &.progress-80 {
-    @include draw-progress(80, #696969);
+    @include draw-progress(80, #FFF);
   }
 }
