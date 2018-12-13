@@ -280,6 +280,12 @@ h1, h2, h3 {
         text-align: left;
     }
 
+    .subtitle {
+        @include heading;
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
     .description {
         flex: 1 1 auto;
         font-size: 0.875rem;

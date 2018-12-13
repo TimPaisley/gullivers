@@ -1,9 +1,11 @@
 class CreateAdventures < ActiveRecord::Migration[5.2]
+
   def change
     create_table :adventures do |t|
 
         t.text :name, null: false
         t.text :image, null: false
+        t.text :category, null: false, inclusion: { in: %w( path, collection ) }
         t.text :description, null: false, default: ""
         t.text :badge_url, null: false
         t.integer :difficulty, null: false
@@ -13,3 +15,4 @@ class CreateAdventures < ActiveRecord::Migration[5.2]
     end
   end
 end
+ 

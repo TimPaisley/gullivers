@@ -5435,112 +5435,130 @@ var elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		elm$json$Json$Decode$succeed(msg));
 };
-var author$project$Main$renderAdventureCard = F2(
-	function (idx, adventure) {
-		var wheelchairInfo = adventure.wheelchair_accessible ? 'Wheelchair Accessible' : '';
-		var fill = (adventure.difficulty / 5) * 100;
-		return A2(
-			elm$html$Html$li,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('card-item')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('card'),
-							elm$html$Html$Events$onClick(
-							author$project$Main$ViewAdventureMap(adventure.id))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('image'),
-									A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (adventure.image + ')'))
-								]),
-							_List_Nil),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('progress-bar')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('fill'),
-											A2(
-											elm$html$Html$Attributes$style,
-											'width',
-											elm$core$String$fromFloat(fill) + '%')
-										]),
-									_List_Nil)
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('content')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('title')
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text(adventure.name)
-										])),
-									A2(
-									elm$html$Html$p,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('description')
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text(adventure.description)
-										])),
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('information')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$div,
-											_List_Nil,
-											_List_fromArray(
-												[
-													elm$html$Html$text(wheelchairInfo)
-												])),
-											A2(
-											elm$html$Html$div,
-											_List_Nil,
-											_List_fromArray(
-												[
-													elm$html$Html$text(
-													'Difficulty Level ' + elm$core$String$fromInt(adventure.difficulty))
-												]))
-										]))
-								]))
-						]))
-				]));
-	});
+var author$project$Main$renderAdventureCard = function (adventure) {
+	var wheelchairInfo = adventure.wheelchair_accessible ? 'Wheelchair Accessible' : '';
+	var fill = (adventure.difficulty / 5) * 100;
+	var category = function () {
+		var _n0 = adventure.category;
+		if (_n0.$ === 'Path') {
+			return 'Path';
+		} else {
+			return 'Collection';
+		}
+	}();
+	return A2(
+		elm$html$Html$li,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('card-item')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('card'),
+						elm$html$Html$Events$onClick(
+						author$project$Main$ViewAdventureMap(adventure.id))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('image'),
+								A2(elm$html$Html$Attributes$style, 'background-image', 'url(' + (adventure.image + ')'))
+							]),
+						_List_Nil),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('progress-bar')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('fill'),
+										A2(
+										elm$html$Html$Attributes$style,
+										'width',
+										elm$core$String$fromFloat(fill) + '%')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('content')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('title')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text(adventure.name)
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('subtitle')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text(category)
+									])),
+								A2(
+								elm$html$Html$p,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('description')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text(adventure.description)
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('information')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text(wheelchairInfo)
+											])),
+										A2(
+										elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text(
+												'Difficulty Level ' + elm$core$String$fromInt(adventure.difficulty))
+											]))
+									]))
+							]))
+					]))
+			]));
+};
+var elm$core$List$sortBy = _List_sortBy;
 var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$renderAdventures = function (adventures) {
 	var bar = A2(
@@ -5613,7 +5631,15 @@ var author$project$Main$renderAdventures = function (adventures) {
 					[
 						elm$html$Html$Attributes$class('cards')
 					]),
-				A2(elm$core$List$indexedMap, author$project$Main$renderAdventureCard, adventures))
+				A2(
+					elm$core$List$map,
+					author$project$Main$renderAdventureCard,
+					A2(
+						elm$core$List$sortBy,
+						function ($) {
+							return $.name;
+						},
+						adventures)))
 			]));
 };
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
@@ -5845,7 +5871,34 @@ var author$project$Main$document = function (model) {
 		title: 'Gulliver\'s Guide'
 	};
 };
+var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = elm$json$Json$Decode$map2(elm$core$Basics$apR);
+var elm$json$Json$Decode$field = _Json_decodeField;
+var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
+	function (key, valDecoder, decoder) {
+		return A2(
+			NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom,
+			A2(elm$json$Json$Decode$field, key, valDecoder),
+			decoder);
+	});
+var author$project$Types$Collection = {$: 'Collection'};
+var author$project$Types$Path = {$: 'Path'};
+var elm$json$Json$Decode$andThen = _Json_andThen;
 var elm$json$Json$Decode$fail = _Json_fail;
+var elm$json$Json$Decode$string = _Json_decodeString;
+var author$project$API$decodeCategory = A2(
+	elm$json$Json$Decode$andThen,
+	function (str) {
+		switch (str) {
+			case 'path':
+				return elm$json$Json$Decode$succeed(author$project$Types$Path);
+			case 'collection':
+				return elm$json$Json$Decode$succeed(author$project$Types$Collection);
+			default:
+				var other = str;
+				return elm$json$Json$Decode$fail('Unknown category: ' + other);
+		}
+	},
+	elm$json$Json$Decode$string);
 var author$project$API$maybeToDecoder = F2(
 	function (error, maybe) {
 		if (maybe.$ === 'Just') {
@@ -5855,7 +5908,6 @@ var author$project$API$maybeToDecoder = F2(
 			return elm$json$Json$Decode$fail(error);
 		}
 	});
-var elm$json$Json$Decode$andThen = _Json_andThen;
 var elm$json$Json$Decode$list = _Json_decodeList;
 var mgold$elm_nonempty_list$List$Nonempty$fromList = function (ys) {
 	if (ys.b) {
@@ -5904,10 +5956,8 @@ var elm$core$String$replace = F3(
 			A2(elm$core$String$split, before, string));
 	});
 var elm$core$String$toFloat = _String_toFloat;
-var elm$json$Json$Decode$field = _Json_decodeField;
 var elm$json$Json$Decode$int = _Json_decodeInt;
 var elm$json$Json$Decode$map4 = _Json_map4;
-var elm$json$Json$Decode$string = _Json_decodeString;
 var author$project$API$decodeLocations = function () {
 	var pointPartsToLatLng = function (parts) {
 		if (((parts.b && parts.b.b) && parts.b.b.b) && (!parts.b.b.b.b)) {
@@ -5957,25 +6007,48 @@ var author$project$API$decodeLocations = function () {
 		A2(elm$json$Json$Decode$field, 'geometry', decodeGeometry));
 	return author$project$API$decodeNonempty(decodeLocation);
 }();
+var author$project$Types$Adventure = F9(
+	function (id, name, image, category, description, locations, badgeUrl, difficulty, wheelchair_accessible) {
+		return {badgeUrl: badgeUrl, category: category, description: description, difficulty: difficulty, id: id, image: image, locations: locations, name: name, wheelchair_accessible: wheelchair_accessible};
+	});
 var elm$json$Json$Decode$bool = _Json_decodeBool;
-var elm$json$Json$Decode$map8 = _Json_map8;
-var author$project$API$decodeAdventure = function () {
-	var makeAdventure = F8(
-		function (id, name, image, description, locations, badgeUrl, difficulty, wheelchair_accessible) {
-			return {badgeUrl: badgeUrl, description: description, difficulty: difficulty, id: id, image: image, locations: locations, name: name, wheelchair_accessible: wheelchair_accessible};
-		});
-	return A9(
-		elm$json$Json$Decode$map8,
-		makeAdventure,
-		A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int),
-		A2(elm$json$Json$Decode$field, 'name', elm$json$Json$Decode$string),
-		A2(elm$json$Json$Decode$field, 'image', elm$json$Json$Decode$string),
-		A2(elm$json$Json$Decode$field, 'description', elm$json$Json$Decode$string),
-		A2(elm$json$Json$Decode$field, 'locations', author$project$API$decodeLocations),
-		A2(elm$json$Json$Decode$field, 'badge_url', elm$json$Json$Decode$string),
-		A2(elm$json$Json$Decode$field, 'difficulty', elm$json$Json$Decode$int),
-		A2(elm$json$Json$Decode$field, 'wheelchair_accessible', elm$json$Json$Decode$bool));
-}();
+var author$project$API$decodeAdventure = A3(
+	NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'wheelchair_accessible',
+	elm$json$Json$Decode$bool,
+	A3(
+		NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'difficulty',
+		elm$json$Json$Decode$int,
+		A3(
+			NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'badge_url',
+			elm$json$Json$Decode$string,
+			A3(
+				NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'locations',
+				author$project$API$decodeLocations,
+				A3(
+					NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'description',
+					elm$json$Json$Decode$string,
+					A3(
+						NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+						'category',
+						author$project$API$decodeCategory,
+						A3(
+							NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+							'image',
+							elm$json$Json$Decode$string,
+							A3(
+								NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+								'name',
+								elm$json$Json$Decode$string,
+								A3(
+									NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+									'id',
+									elm$json$Json$Decode$int,
+									elm$json$Json$Decode$succeed(author$project$Types$Adventure))))))))));
 var author$project$API$decodeAdventures = elm$json$Json$Decode$list(author$project$API$decodeAdventure);
 var elm$http$Http$Internal$EmptyBody = {$: 'EmptyBody'};
 var elm$http$Http$emptyBody = elm$http$Http$Internal$EmptyBody;

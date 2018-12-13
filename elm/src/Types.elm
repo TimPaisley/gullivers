@@ -1,4 +1,4 @@
-module Types exposing (Adventure, LatLng, Location, Screen(..), Token)
+module Types exposing (Adventure, AdventureCategory(..), LatLng, Location, Screen(..), Token)
 
 import List.Nonempty exposing (Nonempty)
 
@@ -12,12 +12,18 @@ type alias Adventure =
     { id : Int
     , name : String
     , image : String
+    , category : AdventureCategory
     , description : String
     , locations : Nonempty Location
     , badgeUrl : String
     , difficulty : Int
     , wheelchair_accessible : Bool
     }
+
+
+type AdventureCategory
+    = Path
+    | Collection
 
 
 type alias Location =

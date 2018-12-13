@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_023950) do
   create_table "adventures", force: :cascade do |t|
     t.text "name", null: false
     t.text "image", null: false
+    t.text "category", null: false, inclusion: { in: %w( path, collection ) }
     t.text "description", default: "", null: false
     t.text "badge_url", null: false
     t.integer "difficulty", null: false

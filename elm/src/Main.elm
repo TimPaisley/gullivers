@@ -11,7 +11,7 @@ import List.Extra as ListX
 import List.Nonempty as Nonempty exposing (Nonempty)
 import Ports
 import RemoteData exposing (RemoteData(..), WebData)
-import Types exposing (Adventure, LatLng, Location, Screen(..), Token)
+import Types exposing (Adventure, AdventureCategory(..), LatLng, Location, Screen(..), Token)
 import Url exposing (Url)
 
 
@@ -325,12 +325,14 @@ renderAdventures adventures =
     in
     div []
         [ bar
-        , ul [ class "cards" ] (List.indexedMap renderAdventureCard adventures)
+        , List.sortBy .name adventures
+            |> List.map renderAdventureCard
+            |> ul [ class "cards" ]
         ]
 
 
-renderAdventureCard : Int -> Adventure -> Html Msg
-renderAdventureCard idx adventure =
+renderAdventureCard : Adventure -> Html Msg
+renderAdventureCard adventure =
     let
         wheelchairInfo =
             if adventure.wheelchair_accessible then
@@ -341,6 +343,14 @@ renderAdventureCard idx adventure =
 
         fill =
             toFloat adventure.difficulty / 5 * 100
+
+        category =
+            case adventure.category of
+                Path ->
+                    "Path"
+
+                Collection ->
+                    "Collection"
     in
     li [ class "card-item" ]
         [ div [ class "card", onClick <| ViewAdventureMap adventure.id ]
@@ -348,6 +358,7 @@ renderAdventureCard idx adventure =
             , div [ class "progress-bar" ] [ div [ class "fill", style "width" (String.fromFloat fill ++ "%") ] [] ]
             , div [ class "content" ]
                 [ div [ class "title" ] [ text adventure.name ]
+                , div [ class "subtitle" ] [ text category ]
                 , p [ class "description" ] [ text adventure.description ]
                 , div [ class "information" ]
                     [ div [] [ text wheelchairInfo ]

@@ -1,10 +1,11 @@
 module API exposing (adventuresRequest, locationsRequest, logOutRequest, visitLocationRequest)
 
 import Http
-import Json.Decode as Decode exposing (Decoder)
+import Json.Decode as Decode exposing (Decoder, bool, float, int, string)
+import Json.Decode.Pipeline exposing (hardcoded, optional, required)
 import Json.Encode as Encode
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Types exposing (Adventure, LatLng, Location, Token)
+import Types exposing (Adventure, AdventureCategory(..), LatLng, Location, Token)
 
 
 adventuresRequest : Token -> Http.Request (List Adventure)
@@ -46,27 +47,33 @@ decodeAdventures =
 
 decodeAdventure : Decoder Adventure
 decodeAdventure =
-    let
-        makeAdventure id name image description locations badgeUrl difficulty wheelchair_accessible =
-            { id = id
-            , name = name
-            , image = image
-            , description = description
-            , locations = locations
-            , badgeUrl = badgeUrl
-            , difficulty = difficulty
-            , wheelchair_accessible = wheelchair_accessible
-            }
-    in
-    Decode.map8 makeAdventure
-        (Decode.field "id" Decode.int)
-        (Decode.field "name" Decode.string)
-        (Decode.field "image" Decode.string)
-        (Decode.field "description" Decode.string)
-        (Decode.field "locations" decodeLocations)
-        (Decode.field "badge_url" Decode.string)
-        (Decode.field "difficulty" Decode.int)
-        (Decode.field "wheelchair_accessible" Decode.bool)
+    Decode.succeed Adventure
+        |> required "id" int
+        |> required "name" string
+        |> required "image" string
+        |> required "category" decodeCategory
+        |> required "description" string
+        |> required "locations" decodeLocations
+        |> required "badge_url" string
+        |> required "difficulty" int
+        |> required "wheelchair_accessible" bool
+
+
+decodeCategory : Decoder AdventureCategory
+decodeCategory =
+    Decode.string
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "path" ->
+                        Decode.succeed Path
+
+                    "collection" ->
+                        Decode.succeed Collection
+
+                    other ->
+                        Decode.fail ("Unknown category: " ++ other)
+            )
 
 
 decodeLocations : Decoder (Nonempty Location)
