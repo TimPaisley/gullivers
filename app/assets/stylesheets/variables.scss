@@ -1,0 +1,14 @@
+$highlight: #696969;
+$text-color: #999999;
+$background: #f0f0f0;
+
+// $highlight: #ffcc00;
+// $text-color: #ffffff;
+// $background: #3c3c3b;
+
+@mixin heading {
+    font-family: 'Helvetica', sans-serif;
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 300;
+}

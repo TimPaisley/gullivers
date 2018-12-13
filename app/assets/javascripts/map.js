@@ -1,4 +1,9 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGltcGFpc2xleXdjYyIsImEiOiJjam9mODZ5bnIwMXFpM2tueDJqbTU5YjI0In0.91UVSWOXuqvG2_1x6nMMVw';
+// const mapStyle = 'mapbox://styles/timpaisleywcc/cjpcdf5taanva2rju1u7luuyo';
+// const markerColor = '#FFCC00';
+
+const mapStyle = 'mapbox://styles/timpaisleywcc/cjp2dq5g420mw2sqimr5unpup';
+const markerColor = '#769e8a';
 
 function onElementCreate(id, callback) {
     if (document.getElementById(id)) {
@@ -32,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var stopObserving = onElementCreate('map', function() {
                     map = new mapboxgl.Map({
                         container: 'map',
-                        style: 'mapbox://styles/timpaisleywcc/cjpcdf5taanva2rju1u7luuyo',
+                        style: mapStyle,
                         center: options.focus,
                         zoom: 13
                     });
@@ -46,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     if (options.locations) {
                         options.locations.forEach(function (loc) {
-                            new mapboxgl.Marker({ color: "#FFCC00" })
+                            new mapboxgl.Marker({ color: markerColor })
                                 .setLngLat([loc.lng, loc.lat])
                                 .addTo(map);
                         });
