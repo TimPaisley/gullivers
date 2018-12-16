@@ -44,6 +44,10 @@ h1, h2, h3 {
     text-decoration: none;
 }
 
+svg {
+    margin: 0.2rem;
+}
+
 .home-page {
     text-align: center;
 
@@ -121,15 +125,9 @@ h1, h2, h3 {
         margin-bottom: 20px;
     }
 
-    .back {
-        flex: 0 0 auto;
-        padding-right: 10px;
-        margin-bottom: 20px;
-        text-decoration: none;
-    }
-
     .brand {
         flex: 3 0 auto;
+        padding: 0 10px;
 
         .title {
             @include heading;
@@ -163,10 +161,6 @@ h1, h2, h3 {
             }
         }
     }
-
-    .side {
-        flex: 0 0 auto;
-    }
 }
 
 .footer {
@@ -192,7 +186,6 @@ h1, h2, h3 {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-    padding: 0 10px;
 
     .section {
         display: flex;
@@ -203,6 +196,15 @@ h1, h2, h3 {
 
         &.main {
             flex: 1;
+        }
+
+        &.icon {
+            flex-direction: row;
+            align-items: center;
+            font-size: 0.8rem;
+
+            user-select: none;
+            cursor: pointer;
         }
 
         .title {

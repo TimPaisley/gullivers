@@ -3,12 +3,16 @@ module Main exposing (Model, Msg(..), init, main, update, view)
 import API exposing (adventuresRequest, locationsRequest, logOutRequest, visitLocationRequest)
 import Browser
 import Browser.Navigation as Nav
+import Color exposing (Color)
 import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, small, span, text, ul)
 import Html.Attributes exposing (class, classList, href, id, src, style, target)
 import Html.Events exposing (onClick)
-import Icons exposing (backpackIcon, campfireIcon, compassIcon, mapIcon)
 import List.Extra as ListX
 import List.Nonempty as Nonempty exposing (Nonempty)
+import Material.Icons.Action exposing (exit_to_app, report_problem)
+import Material.Icons.Content exposing (filter_list, sort)
+import Material.Icons.Navigation exposing (arrow_back)
+import Material.Icons.Social exposing (share)
 import Ports
 import RemoteData exposing (RemoteData(..), WebData)
 import Types exposing (Adventure, AdventureCategory(..), LatLng, Location, Screen(..), Token)
@@ -284,8 +288,8 @@ renderProfile =
             [ div [ class "title" ] [ text "Development" ]
             , div [ class "subtitle" ] [ text "Junior Adventurer" ]
             ]
-        , div [ class "section", onClick LogOut ]
-            [ text "x" ]
+        , div [ class "section icon", onClick LogOut ]
+            [ exit_to_app Color.darkGrey 20, text "Log Out" ]
         ]
 
 
@@ -317,10 +321,10 @@ renderAdventures adventures =
                     [ div [ class "title" ] [ text "Adventures" ]
                     , div [ class "subtitle" ] [ text "Showing All" ]
                     ]
-                , div [ class "section" ]
-                    [ text "?" ]
-                , div [ class "section" ]
-                    [ text "?" ]
+                , div [ class "section icon" ]
+                    [ filter_list Color.darkGrey 20, text "Filter" ]
+                , div [ class "section icon" ]
+                    [ sort Color.darkGrey 20, text "Sort" ]
                 ]
     in
     div []
@@ -379,14 +383,17 @@ renderAdventureMap model adventures adventureId locationIdx =
         Just adventure ->
             let
                 header =
-                    div [ class "header" ]
-                        [ a [ href "/", class "back" ] [ text "◀" ]
-                        , div [ class "brand" ]
+                    div [ class "vertical-bar" ]
+                        [ a [ href "/", class "section icon" ]
+                            [ arrow_back Color.darkGrey 20 ]
+                        , div [ class "section main" ]
                             [ div [ class "title" ] [ text adventure.name ]
                             , div [ class "subtitle" ] [ text "Walkway" ]
                             ]
-                        , div [ class "side" ]
-                            [ text "?" ]
+                        , div [ class "section icon" ]
+                            [ report_problem Color.darkGrey 20 ]
+                        , div [ class "section icon" ]
+                            [ share Color.darkGrey 20 ]
                         ]
 
                 location =

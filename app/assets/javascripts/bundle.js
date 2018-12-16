@@ -4477,6 +4477,10 @@ var author$project$Main$ChangeUrl = function (a) {
 var author$project$Main$RequestUrl = function (a) {
 	return {$: 'RequestUrl', a: a};
 };
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
@@ -4557,34 +4561,35 @@ var elm$core$Array$foldr = F3(
 var elm$core$Array$toList = function (array) {
 	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
-var elm$core$Basics$add = _Basics_add;
-var elm$core$Basics$apL = F2(
-	function (f, x) {
-		return f(x);
-	});
-var elm$core$Basics$apR = F2(
-	function (x, f) {
-		return f(x);
-	});
+var elm$core$Basics$fdiv = _Basics_fdiv;
+var avh4$elm_color$Color$darkGrey = A4(avh4$elm_color$Color$RgbaSpace, 186 / 255, 189 / 255, 182 / 255, 1.0);
+var avh4$elm_color$Color$toRgba = function (_n0) {
+	var r = _n0.a;
+	var g = _n0.b;
+	var b = _n0.c;
+	var a = _n0.d;
+	return {alpha: a, blue: b, green: g, red: r};
+};
 var elm$core$Basics$append = _Utils_append;
-var elm$core$Basics$eq = _Utils_equal;
-var elm$core$Basics$gt = _Utils_gt;
-var elm$core$Basics$lt = _Utils_lt;
-var elm$core$Basics$sub = _Basics_sub;
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
+var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Basics$round = _Basics_round;
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
 var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$String$fromFloat = _String_fromNumber;
 var elm$core$String$fromInt = _String_fromNumber;
+var danmarcab$material_icons$Material$Icons$Internal$toRgbaString = function (color) {
+	var _n0 = avh4$elm_color$Color$toRgba(color);
+	var red = _n0.red;
+	var green = _n0.green;
+	var blue = _n0.blue;
+	var alpha = _n0.alpha;
+	return 'rgba(' + (elm$core$String$fromInt(
+		elm$core$Basics$round(255 * red)) + (',' + (elm$core$String$fromInt(
+		elm$core$Basics$round(255 * green)) + (',' + (elm$core$String$fromInt(
+		elm$core$Basics$round(255 * blue)) + (',' + (elm$core$String$fromFloat(alpha) + ')')))))));
+};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4603,7 +4608,6 @@ var elm$core$Array$Array_elm_builtin = F4(
 		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
 	});
 var elm$core$Basics$ceiling = _Basics_ceiling;
-var elm$core$Basics$fdiv = _Basics_fdiv;
 var elm$core$Basics$logBase = F2(
 	function (base, number) {
 		return _Basics_log(number) / _Basics_log(base);
@@ -4664,6 +4668,11 @@ var elm$core$Array$compressNodes = F2(
 			}
 		}
 	});
+var elm$core$Basics$apR = F2(
+	function (x, f) {
+		return f(x);
+	});
+var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
 	return x;
@@ -4684,12 +4693,18 @@ var elm$core$Array$treeFromBuilder = F2(
 			}
 		}
 	});
+var elm$core$Basics$add = _Basics_add;
+var elm$core$Basics$apL = F2(
+	function (f, x) {
+		return f(x);
+	});
 var elm$core$Basics$floor = _Basics_floor;
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
 	});
-var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
@@ -4715,6 +4730,7 @@ var elm$core$Array$builderToArray = F2(
 		}
 	});
 var elm$core$Basics$idiv = _Basics_idiv;
+var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Elm$JsArray$initialize = _JsArray_initialize;
 var elm$core$Array$initializeHelp = F5(
 	function (fn, fromIndex, len, nodeList, tail) {
@@ -4979,6 +4995,86 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
+var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
+var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
+var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var danmarcab$material_icons$Material$Icons$Internal$icon = F4(
+	function (viewBox, children, color, size) {
+		var stringSize = elm$core$String$fromInt(size);
+		var stringColor = danmarcab$material_icons$Material$Icons$Internal$toRgbaString(color);
+		return A2(
+			elm$svg$Svg$svg,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$width(stringSize),
+					elm$svg$Svg$Attributes$height(stringSize),
+					elm$svg$Svg$Attributes$viewBox(viewBox)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$svg$Svg$g,
+					_List_fromArray(
+						[
+							elm$svg$Svg$Attributes$fill(stringColor)
+						]),
+					children)
+				]));
+	});
+var elm$svg$Svg$path = elm$svg$Svg$trustedNode('path');
+var elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var danmarcab$material_icons$Material$Icons$Action$report_problem = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M2 42h44L24 4 2 42zm24-6h-4v-4h4v4zm0-8h-4v-8h4v8z')
+				]),
+			_List_Nil)
+		]));
+var danmarcab$material_icons$Material$Icons$Navigation$arrow_back = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z')
+				]),
+			_List_Nil)
+		]));
+var danmarcab$material_icons$Material$Icons$Social$share = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M36 32.17c-1.52 0-2.89.59-3.93 1.54L17.82 25.4c.11-.45.18-.92.18-1.4s-.07-.95-.18-1.4l14.1-8.23c1.07 1 2.5 1.62 4.08 1.62 3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6c0 .48.07.95.18 1.4l-14.1 8.23c-1.07-1-2.5-1.62-4.08-1.62-3.31 0-6 2.69-6 6s2.69 6 6 6c1.58 0 3.01-.62 4.08-1.62l14.25 8.31c-.1.42-.16.86-.16 1.31 0 3.22 2.61 5.83 5.83 5.83s5.83-2.61 5.83-5.83-2.61-5.83-5.83-5.83z')
+				]),
+			_List_Nil)
+		]));
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$p = _VirtualDom_node('p');
@@ -5281,7 +5377,7 @@ var author$project$Main$renderAdventureMap = F4(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('header')
+						elm$html$Html$Attributes$class('vertical-bar')
 					]),
 				_List_fromArray(
 					[
@@ -5290,17 +5386,17 @@ var author$project$Main$renderAdventureMap = F4(
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$href('/'),
-								elm$html$Html$Attributes$class('back')
+								elm$html$Html$Attributes$class('section icon')
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('◀')
+								A2(danmarcab$material_icons$Material$Icons$Navigation$arrow_back, avh4$elm_color$Color$darkGrey, 20)
 							])),
 						A2(
 						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('brand')
+								elm$html$Html$Attributes$class('section main')
 							]),
 						_List_fromArray(
 							[
@@ -5329,11 +5425,21 @@ var author$project$Main$renderAdventureMap = F4(
 						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('side')
+								elm$html$Html$Attributes$class('section icon')
 							]),
 						_List_fromArray(
 							[
-								elm$html$Html$text('?')
+								A2(danmarcab$material_icons$Material$Icons$Action$report_problem, avh4$elm_color$Color$darkGrey, 20)
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('section icon')
+							]),
+						_List_fromArray(
+							[
+								A2(danmarcab$material_icons$Material$Icons$Social$share, avh4$elm_color$Color$darkGrey, 20)
 							]))
 					]));
 			return A2(
@@ -5414,7 +5520,6 @@ var author$project$Main$renderAdventureMap = F4(
 var author$project$Main$ViewAdventureMap = function (a) {
 	return {$: 'ViewAdventureMap', a: a};
 };
-var elm$core$String$fromFloat = _String_fromNumber;
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
@@ -5558,6 +5663,32 @@ var author$project$Main$renderAdventureCard = function (adventure) {
 					]))
 			]));
 };
+var danmarcab$material_icons$Material$Icons$Content$filter_list = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M20 36h8v-4h-8v4zM6 12v4h36v-4H6zm6 14h24v-4H12v4z')
+				]),
+			_List_Nil)
+		]));
+var danmarcab$material_icons$Material$Icons$Content$sort = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M6 36h12v-4H6v4zm0-24v4h36v-4H6zm0 14h24v-4H6v4z')
+				]),
+			_List_Nil)
+		]));
 var elm$core$List$sortBy = _List_sortBy;
 var elm$html$Html$ul = _VirtualDom_node('ul');
 var author$project$Main$renderAdventures = function (adventures) {
@@ -5602,21 +5733,23 @@ var author$project$Main$renderAdventures = function (adventures) {
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('section')
+						elm$html$Html$Attributes$class('section icon')
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('?')
+						A2(danmarcab$material_icons$Material$Icons$Content$filter_list, avh4$elm_color$Color$darkGrey, 20),
+						elm$html$Html$text('Filter')
 					])),
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('section')
+						elm$html$Html$Attributes$class('section icon')
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('?')
+						A2(danmarcab$material_icons$Material$Icons$Content$sort, avh4$elm_color$Color$darkGrey, 20),
+						elm$html$Html$text('Sort')
 					]))
 			]));
 	return A2(
@@ -5670,6 +5803,19 @@ var author$project$Main$renderFooter = A2(
 				]))
 		]));
 var author$project$Main$LogOut = {$: 'LogOut'};
+var danmarcab$material_icons$Material$Icons$Action$exit_to_app = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M20.17 31.17L23 34l10-10-10-10-2.83 2.83L25.34 22H6v4h19.34l-5.17 5.17zM38 6H10c-2.21 0-4 1.79-4 4v8h4v-8h28v28H10v-8H6v8c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V10c0-2.21-1.79-4-4-4z')
+				]),
+			_List_Nil)
+		]));
 var elm$html$Html$span = _VirtualDom_node('span');
 var author$project$Main$renderProfile = A2(
 	elm$html$Html$div,
@@ -5773,12 +5919,13 @@ var author$project$Main$renderProfile = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('section'),
+					elm$html$Html$Attributes$class('section icon'),
 					elm$html$Html$Events$onClick(author$project$Main$LogOut)
 				]),
 			_List_fromArray(
 				[
-					elm$html$Html$text('x')
+					A2(danmarcab$material_icons$Material$Icons$Action$exit_to_app, avh4$elm_color$Color$darkGrey, 20),
+					elm$html$Html$text('Log Out')
 				]))
 		]));
 var author$project$Main$renderHomeScreen = function (adventures) {
