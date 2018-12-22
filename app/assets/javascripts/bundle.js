@@ -4477,6 +4477,7 @@ var author$project$Main$ChangeUrl = function (a) {
 var author$project$Main$RequestUrl = function (a) {
 	return {$: 'RequestUrl', a: a};
 };
+var author$project$Main$ToggleInfo = {$: 'ToggleInfo'};
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
 		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
@@ -5027,7 +5028,7 @@ var danmarcab$material_icons$Material$Icons$Internal$icon = F4(
 	});
 var elm$svg$Svg$path = elm$svg$Svg$trustedNode('path');
 var elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var danmarcab$material_icons$Material$Icons$Action$report_problem = A2(
+var danmarcab$material_icons$Material$Icons$Action$feedback = A2(
 	danmarcab$material_icons$Material$Icons$Internal$icon,
 	'0 0 48 48',
 	_List_fromArray(
@@ -5036,11 +5037,11 @@ var danmarcab$material_icons$Material$Icons$Action$report_problem = A2(
 			elm$svg$Svg$path,
 			_List_fromArray(
 				[
-					elm$svg$Svg$Attributes$d('M2 42h44L24 4 2 42zm24-6h-4v-4h4v4zm0-8h-4v-8h4v8z')
+					elm$svg$Svg$Attributes$d('M40 4H8C5.79 4 4.02 5.79 4.02 8L4 44l8-8h28c2.21 0 4-1.79 4-4V8c0-2.21-1.79-4-4-4zM26 28h-4v-4h4v4zm0-8h-4v-8h4v8z')
 				]),
 			_List_Nil)
 		]));
-var danmarcab$material_icons$Material$Icons$Navigation$arrow_back = A2(
+var danmarcab$material_icons$Material$Icons$Action$home = A2(
 	danmarcab$material_icons$Material$Icons$Internal$icon,
 	'0 0 48 48',
 	_List_fromArray(
@@ -5049,7 +5050,46 @@ var danmarcab$material_icons$Material$Icons$Navigation$arrow_back = A2(
 			elm$svg$Svg$path,
 			_List_fromArray(
 				[
-					elm$svg$Svg$Attributes$d('M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z')
+					elm$svg$Svg$Attributes$d('M20 40V28h8v12h10V24h6L24 6 4 24h6v16z')
+				]),
+			_List_Nil)
+		]));
+var danmarcab$material_icons$Material$Icons$Action$subject = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M28 34H8v4h20v-4zm12-16H8v4h32v-4zM8 30h32v-4H8v4zm0-20v4h32v-4H8z')
+				]),
+			_List_Nil)
+		]));
+var danmarcab$material_icons$Material$Icons$Navigation$chevron_left = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M30.83 14.83L28 12 16 24l12 12 2.83-2.83L21.66 24z')
+				]),
+			_List_Nil)
+		]));
+var danmarcab$material_icons$Material$Icons$Navigation$chevron_right = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M20 12l-2.83 2.83L26.34 24l-9.17 9.17L20 36l12-12z')
 				]),
 			_List_Nil)
 		]));
@@ -5077,7 +5117,6 @@ var elm$core$Maybe$withDefault = F2(
 	});
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$p = _VirtualDom_node('p');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -5190,6 +5229,23 @@ var elm$html$Html$Attributes$href = function (url) {
 		_VirtualDom_noJavaScriptUri(url));
 };
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var elm_community$list_extra$List$Extra$find = F2(
 	function (predicate, list) {
 		find:
@@ -5274,8 +5330,8 @@ var mgold$elm_nonempty_list$List$Nonempty$toList = function (_n0) {
 	var xs = _n0.b;
 	return A2(elm$core$List$cons, x, xs);
 };
-var author$project$Main$renderAdventureMap = F4(
-	function (model, adventures, adventureId, locationIdx) {
+var author$project$Main$renderAdventureMap = F5(
+	function (model, adventures, adventureId, locationIdx, infoToggle) {
 		var maybeAdventure = A2(
 			elm_community$list_extra$List$Extra$find,
 			function (a) {
@@ -5293,13 +5349,7 @@ var author$project$Main$renderAdventureMap = F4(
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('Previous Location')
-							]))
+						A2(danmarcab$material_icons$Material$Icons$Navigation$chevron_left, avh4$elm_color$Color$darkGrey, 30)
 					])) : A2(
 				elm$html$Html$a,
 				_List_fromArray(
@@ -5308,13 +5358,7 @@ var author$project$Main$renderAdventureMap = F4(
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('Previous Location')
-							]))
+						A2(danmarcab$material_icons$Material$Icons$Navigation$chevron_left, avh4$elm_color$Color$darkGrey, 30)
 					]));
 			var nextLocation = (_Utils_cmp(
 				locationIdx,
@@ -5327,13 +5371,7 @@ var author$project$Main$renderAdventureMap = F4(
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('Next Location')
-							]))
+						A2(danmarcab$material_icons$Material$Icons$Navigation$chevron_right, avh4$elm_color$Color$darkGrey, 30)
 					])) : A2(
 				elm$html$Html$a,
 				_List_fromArray(
@@ -5342,13 +5380,7 @@ var author$project$Main$renderAdventureMap = F4(
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm$html$Html$text('Next Location')
-							]))
+						A2(danmarcab$material_icons$Material$Icons$Navigation$chevron_right, avh4$elm_color$Color$darkGrey, 30)
 					]));
 			var location = A2(
 				elm$core$Maybe$withDefault,
@@ -5357,6 +5389,27 @@ var author$project$Main$renderAdventureMap = F4(
 					elm_community$list_extra$List$Extra$getAt,
 					locationIdx - 1,
 					mgold$elm_nonempty_list$List$Nonempty$toList(adventure.locations)));
+			var infoToggleButton = A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$id('info-toggle'),
+						elm$html$Html$Events$onClick(author$project$Main$ToggleInfo)
+					]),
+				_List_fromArray(
+					[
+						A2(danmarcab$material_icons$Material$Icons$Action$subject, avh4$elm_color$Color$darkGrey, 30)
+					]));
+			var infoBox = infoToggle ? A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('info-box')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(location.description)
+					])) : A2(elm$html$Html$div, _List_Nil, _List_Nil);
 			var indicatorFor = function (l) {
 				return A2(
 					elm$html$Html$div,
@@ -5377,7 +5430,7 @@ var author$project$Main$renderAdventureMap = F4(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('vertical-bar')
+						elm$html$Html$Attributes$class('vertical-bar top')
 					]),
 				_List_fromArray(
 					[
@@ -5390,7 +5443,7 @@ var author$project$Main$renderAdventureMap = F4(
 							]),
 						_List_fromArray(
 							[
-								A2(danmarcab$material_icons$Material$Icons$Navigation$arrow_back, avh4$elm_color$Color$darkGrey, 20)
+								A2(danmarcab$material_icons$Material$Icons$Action$home, avh4$elm_color$Color$darkGrey, 20)
 							])),
 						A2(
 						elm$html$Html$div,
@@ -5429,7 +5482,7 @@ var author$project$Main$renderAdventureMap = F4(
 							]),
 						_List_fromArray(
 							[
-								A2(danmarcab$material_icons$Material$Icons$Action$report_problem, avh4$elm_color$Color$darkGrey, 20)
+								A2(danmarcab$material_icons$Material$Icons$Action$feedback, avh4$elm_color$Color$darkGrey, 20)
 							])),
 						A2(
 						elm$html$Html$div,
@@ -5450,7 +5503,6 @@ var author$project$Main$renderAdventureMap = F4(
 					]),
 				_List_fromArray(
 					[
-						header,
 						A2(
 						elm$html$Html$div,
 						_List_fromArray(
@@ -5458,11 +5510,14 @@ var author$project$Main$renderAdventureMap = F4(
 								elm$html$Html$Attributes$id('map')
 							]),
 						_List_Nil),
+						header,
+						infoToggleButton,
+						infoBox,
 						A2(
 						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$id('locations')
+								elm$html$Html$Attributes$class('vertical-bar bottom')
 							]),
 						_List_fromArray(
 							[
@@ -5470,7 +5525,15 @@ var author$project$Main$renderAdventureMap = F4(
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('content')
+										elm$html$Html$Attributes$class('section')
+									]),
+								_List_fromArray(
+									[previousLocation])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('section main')
 									]),
 								_List_fromArray(
 									[
@@ -5491,26 +5554,16 @@ var author$project$Main$renderAdventureMap = F4(
 										_List_fromArray(
 											[
 												elm$html$Html$text(location.name)
-											])),
-										A2(
-										elm$html$Html$p,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('description')
-											]),
-										_List_fromArray(
-											[
-												elm$html$Html$text(location.description)
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('buttons')
-											]),
-										_List_fromArray(
-											[previousLocation, nextLocation]))
-									]))
+											]))
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('section')
+									]),
+								_List_fromArray(
+									[nextLocation]))
 							]))
 					]));
 		} else {
@@ -5531,25 +5584,9 @@ var author$project$Main$ViewAdventureMap = function (a) {
 	return {$: 'ViewAdventureMap', a: a};
 };
 var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$p = _VirtualDom_node('p');
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
 var author$project$Main$renderAdventureCard = function (adventure) {
 	var wheelchairInfo = adventure.wheelchairAccessible ? 'Wheelchair Accessible' : '';
 	var fill = (adventure.difficulty / 5) * 100;
@@ -6153,34 +6190,41 @@ var author$project$Main$renderHomeScreen = F2(
 	});
 var author$project$Main$renderLoadingScreen = elm$html$Html$text('LOADING...');
 var author$project$Main$view = function (model) {
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$id('wrapper')
-			]),
-		_List_fromArray(
-			[
-				function () {
-				var _n0 = model.adventures;
-				switch (_n0.$) {
-					case 'Success':
-						var adventures = _n0.a;
-						var _n1 = model.screen;
-						if (_n1.$ === 'Home') {
-							return A2(author$project$Main$renderHomeScreen, adventures, model.cardDisplay);
-						} else {
-							var id = _n1.a;
-							var idx = _n1.b;
-							return A4(author$project$Main$renderAdventureMap, model, adventures, id, idx);
-						}
-					case 'Failure':
-						return elm$html$Html$text('Oops!');
-					default:
-						return author$project$Main$renderLoadingScreen;
-				}
-			}()
-			]));
+	var _n0 = model.adventures;
+	switch (_n0.$) {
+		case 'Success':
+			var adventures = _n0.a;
+			var _n1 = model.screen;
+			if (_n1.$ === 'Home') {
+				return A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$id('wrapper')
+						]),
+					_List_fromArray(
+						[
+							A2(author$project$Main$renderHomeScreen, adventures, model.cardDisplay)
+						]));
+			} else {
+				var id = _n1.a;
+				var idx = _n1.b;
+				return A5(author$project$Main$renderAdventureMap, model, adventures, id, idx, model.infoToggle);
+			}
+		case 'Failure':
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$id('wrapper')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Oops!')
+					]));
+		default:
+			return author$project$Main$renderLoadingScreen;
+	}
 };
 var author$project$Main$document = function (model) {
 	return {
@@ -7322,7 +7366,7 @@ var author$project$Main$init = F3(
 		var screen = _n0.a;
 		var cmd = _n0.b;
 		return _Utils_Tuple2(
-			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
+			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, infoToggle: false, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
 			elm$core$Platform$Cmd$batch(
 				_List_fromArray(
 					[
@@ -7550,6 +7594,7 @@ var elm$url$Url$fromString = function (str) {
 };
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var elm$core$Basics$not = _Basics_not;
 var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
@@ -7722,7 +7767,7 @@ var author$project$Main$update = F2(
 						model,
 						{cardDisplay: newCardDisplay}),
 					elm$core$Platform$Cmd$none);
-			default:
+			case 'ChangeSort':
 				var newSort = msg.a;
 				var cardDisplay = model.cardDisplay;
 				var newCardDisplay = _Utils_update(
@@ -7732,6 +7777,12 @@ var author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{cardDisplay: newCardDisplay}),
+					elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{infoToggle: !model.infoToggle}),
 					elm$core$Platform$Cmd$none);
 		}
 	});

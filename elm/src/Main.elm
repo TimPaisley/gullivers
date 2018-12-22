@@ -9,9 +9,9 @@ import Html.Attributes exposing (class, classList, href, id, src, style, target)
 import Html.Events exposing (onClick)
 import List.Extra as ListX
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Material.Icons.Action exposing (exit_to_app, report_problem)
+import Material.Icons.Action exposing (exit_to_app, feedback, home, subject)
 import Material.Icons.Content exposing (filter_list, sort)
-import Material.Icons.Navigation exposing (arrow_back)
+import Material.Icons.Navigation exposing (chevron_left, chevron_right)
 import Material.Icons.Social exposing (share)
 import Ports
 import RemoteData exposing (RemoteData(..), WebData)
@@ -30,6 +30,7 @@ type alias Model =
     , key : Nav.Key
     , visitResult : WebData ()
     , cardDisplay : CardDisplay
+    , infoToggle : Bool
     }
 
 
@@ -55,6 +56,7 @@ init flags url key =
       , key = key
       , visitResult = NotAsked
       , cardDisplay = defaultCardDisplay
+      , infoToggle = False
       }
     , Cmd.batch
         [ API.adventuresRequest flags.token
@@ -83,6 +85,7 @@ type Msg
     | ChangeToggle (Maybe Toggle)
     | ChangeFilter Filter
     | ChangeSort Sort
+    | ToggleInfo
 
 
 screenFromUrl : WebData (List Adventure) -> Url -> ( Screen, Cmd Msg )
@@ -265,6 +268,9 @@ update msg model =
             in
             ( { model | cardDisplay = newCardDisplay }, Cmd.none )
 
+        ToggleInfo ->
+            ( { model | infoToggle = not model.infoToggle }, Cmd.none )
+
 
 
 ---- VIEW ----
@@ -279,22 +285,21 @@ document model =
 
 view : Model -> Html Msg
 view model =
-    div [ id "wrapper" ]
-        [ case model.adventures of
-            Success adventures ->
-                case model.screen of
-                    Home ->
-                        renderHomeScreen adventures model.cardDisplay
+    case model.adventures of
+        Success adventures ->
+            case model.screen of
+                Home ->
+                    div [ id "wrapper" ]
+                        [ renderHomeScreen adventures model.cardDisplay ]
 
-                    AdventureMap id idx ->
-                        renderAdventureMap model adventures id idx
+                AdventureMap id idx ->
+                    renderAdventureMap model adventures id idx model.infoToggle
 
-            Failure _ ->
-                text "Oops!"
+        Failure _ ->
+            div [ id "wrapper" ] [ text "Oops!" ]
 
-            _ ->
-                renderLoadingScreen
-        ]
+        _ ->
+            renderLoadingScreen
 
 
 renderLoadingScreen : Html Msg
@@ -492,8 +497,8 @@ renderAdventureCard adventure =
         ]
 
 
-renderAdventureMap : Model -> List Adventure -> Int -> Int -> Html Msg
-renderAdventureMap model adventures adventureId locationIdx =
+renderAdventureMap : Model -> List Adventure -> Int -> Int -> Bool -> Html Msg
+renderAdventureMap model adventures adventureId locationIdx infoToggle =
     let
         maybeAdventure =
             ListX.find (\a -> a.id == adventureId) adventures
@@ -502,18 +507,30 @@ renderAdventureMap model adventures adventureId locationIdx =
         Just adventure ->
             let
                 header =
-                    div [ class "vertical-bar" ]
+                    div [ class "vertical-bar top" ]
                         [ a [ href "/", class "section icon" ]
-                            [ arrow_back Color.darkGrey 20 ]
+                            [ home Color.darkGrey 20 ]
                         , div [ class "section main" ]
                             [ div [ class "title" ] [ text adventure.name ]
                             , div [ class "subtitle" ] [ text "Walkway" ]
                             ]
                         , div [ class "section icon" ]
-                            [ report_problem Color.darkGrey 20 ]
+                            [ feedback Color.darkGrey 20 ]
                         , div [ class "section icon" ]
                             [ share Color.darkGrey 20 ]
                         ]
+
+                infoToggleButton =
+                    div [ id "info-toggle", onClick ToggleInfo ]
+                        [ subject Color.darkGrey 30 ]
+
+                infoBox =
+                    if infoToggle then
+                        div [ class "info-box" ]
+                            [ text location.description ]
+
+                    else
+                        div [] []
 
                 location =
                     ListX.getAt (locationIdx - 1) (Nonempty.toList adventure.locations)
@@ -522,35 +539,34 @@ renderAdventureMap model adventures adventureId locationIdx =
                 previousLocation =
                     if locationIdx > 1 then
                         a [ href <| "/adventures/" ++ String.fromInt adventureId ++ "/locations/" ++ (String.fromInt <| locationIdx - 1) ]
-                            [ div [] [ text "Previous Location" ] ]
+                            [ chevron_left Color.darkGrey 30 ]
 
                     else
-                        a [ class "disabled" ] [ div [] [ text "Previous Location" ] ]
+                        a [ class "disabled" ] [ chevron_left Color.darkGrey 30 ]
 
                 nextLocation =
                     if locationIdx < Nonempty.length adventure.locations then
                         a [ href <| "/adventures/" ++ String.fromInt adventureId ++ "/locations/" ++ (String.fromInt <| locationIdx + 1) ]
-                            [ div [] [ text "Next Location" ] ]
+                            [ chevron_right Color.darkGrey 30 ]
 
                     else
-                        a [ class "disabled" ] [ div [] [ text "Next Location" ] ]
+                        a [ class "disabled" ] [ chevron_right Color.darkGrey 30 ]
 
                 indicatorFor l =
                     div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
             in
             div [ id "adventure-map-screen" ]
-                [ header
-                , div [ id "map" ] []
-                , div [ id "locations" ]
-                    [ div [ class "content" ]
+                [ div [ id "map" ] []
+                , header
+                , infoToggleButton
+                , infoBox
+                , div [ class "vertical-bar bottom" ]
+                    [ div [ class "section" ] [ previousLocation ]
+                    , div [ class "section main" ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
-                        , p [ class "description" ] [ text location.description ]
-                        , div [ class "buttons" ]
-                            [ previousLocation
-                            , nextLocation
-                            ]
                         ]
+                    , div [ class "section" ] [ nextLocation ]
                     ]
                 ]
 
