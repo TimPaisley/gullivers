@@ -15,7 +15,7 @@ import Material.Icons.Navigation exposing (arrow_back)
 import Material.Icons.Social exposing (share)
 import Ports
 import RemoteData exposing (RemoteData(..), WebData)
-import Types exposing (Adventure, AdventureCategory(..), LatLng, Location, Screen(..), Token)
+import Types exposing (Adventure, AdventureCategory(..), CardDisplay, Filter(..), LatLng, Location, Screen(..), Sort(..), Toggle(..), Token, allFilters, allSorts, filterToString, sortToString)
 import Url exposing (Url)
 
 
@@ -29,6 +29,7 @@ type alias Model =
     , screen : Screen
     , key : Nav.Key
     , visitResult : WebData ()
+    , cardDisplay : CardDisplay
     }
 
 
@@ -41,12 +42,19 @@ init flags url key =
     let
         ( screen, cmd ) =
             screenFromUrl NotAsked url
+
+        defaultCardDisplay =
+            { toggle = Nothing
+            , filter = All
+            , sort = Name
+            }
     in
     ( { flags = flags
       , adventures = NotAsked
       , screen = screen
       , key = key
       , visitResult = NotAsked
+      , cardDisplay = defaultCardDisplay
       }
     , Cmd.batch
         [ API.adventuresRequest flags.token
@@ -72,6 +80,9 @@ type Msg
     | ViewAdventureMap Int
     | LogOut
     | RedirectHome (WebData ())
+    | ChangeToggle (Maybe Toggle)
+    | ChangeFilter Filter
+    | ChangeSort Sort
 
 
 screenFromUrl : WebData (List Adventure) -> Url -> ( Screen, Cmd Msg )
@@ -224,6 +235,36 @@ update msg model =
         RedirectHome _ ->
             ( { model | screen = Home }, Nav.load "/" )
 
+        ChangeToggle newToggle ->
+            let
+                cardDisplay =
+                    model.cardDisplay
+
+                newCardDisplay =
+                    { cardDisplay | toggle = newToggle }
+            in
+            ( { model | cardDisplay = newCardDisplay }, Cmd.none )
+
+        ChangeFilter newFilter ->
+            let
+                cardDisplay =
+                    model.cardDisplay
+
+                newCardDisplay =
+                    { cardDisplay | filter = newFilter }
+            in
+            ( { model | cardDisplay = newCardDisplay }, Cmd.none )
+
+        ChangeSort newSort ->
+            let
+                cardDisplay =
+                    model.cardDisplay
+
+                newCardDisplay =
+                    { cardDisplay | sort = newSort }
+            in
+            ( { model | cardDisplay = newCardDisplay }, Cmd.none )
+
 
 
 ---- VIEW ----
@@ -243,7 +284,7 @@ view model =
             Success adventures ->
                 case model.screen of
                     Home ->
-                        renderHomeScreen adventures
+                        renderHomeScreen adventures model.cardDisplay
 
                     AdventureMap id idx ->
                         renderAdventureMap model adventures id idx
@@ -293,8 +334,8 @@ renderProfile =
         ]
 
 
-renderHomeScreen : List Adventure -> Html Msg
-renderHomeScreen adventures =
+renderHomeScreen : List Adventure -> CardDisplay -> Html Msg
+renderHomeScreen adventures display =
     let
         header =
             div [ class "header" ]
@@ -307,29 +348,107 @@ renderHomeScreen adventures =
     in
     div []
         [ header
-        , renderAdventures adventures
+        , renderAdventures adventures display
         , renderFooter
         ]
 
 
-renderAdventures : List Adventure -> Html Msg
-renderAdventures adventures =
+renderAdventures : List Adventure -> CardDisplay -> Html Msg
+renderAdventures adventures display =
     let
-        bar =
+        toggleAction toggle =
+            if Just toggle == display.toggle then
+                ChangeToggle Nothing
+
+            else
+                ChangeToggle (Just toggle)
+
+        toggleBar =
             div [ class "vertical-bar" ]
                 [ div [ class "section main" ]
                     [ div [ class "title" ] [ text "Adventures" ]
                     , div [ class "subtitle" ] [ text "Showing All" ]
                     ]
-                , div [ class "section icon" ]
+                , div [ class "section icon", onClick <| toggleAction Filter ]
                     [ filter_list Color.darkGrey 20, text "Filter" ]
-                , div [ class "section icon" ]
+                , div [ class "section icon", onClick <| toggleAction Sort ]
                     [ sort Color.darkGrey 20, text "Sort" ]
                 ]
+
+        action comparison msg selection =
+            if selection == comparison then
+                NoOp
+
+            else
+                msg selection
+
+        toggles =
+            case display.toggle of
+                Just Filter ->
+                    let
+                        filterAction =
+                            action display.filter ChangeFilter
+
+                        section filter =
+                            div
+                                [ classList
+                                    [ ( "section", True )
+                                    , ( "selected", display.filter == filter )
+                                    ]
+                                , onClick <| filterAction filter
+                                ]
+                                [ text <| filterToString filter ]
+                    in
+                    div [ class "toggle-section" ] (List.map section allFilters)
+
+                Just Sort ->
+                    let
+                        sortAction =
+                            action display.sort ChangeSort
+
+                        section sort =
+                            div
+                                [ classList
+                                    [ ( "section", True )
+                                    , ( "selected", display.sort == sort )
+                                    ]
+                                , onClick <| sortAction sort
+                                ]
+                                [ text <| sortToString sort ]
+                    in
+                    div [ class "toggle-section" ] (List.map section allSorts)
+
+                Nothing ->
+                    div [ class "toggle-section" ] []
+
+        applyFilter =
+            case display.filter of
+                All ->
+                    List.filter (\_ -> True)
+
+                Accessible ->
+                    List.filter .wheelchairAccessible
+
+                Simple ->
+                    List.filter (\a -> a.difficulty < 3)
+
+        applySort =
+            case display.sort of
+                Name ->
+                    List.sortBy .name
+
+                Size ->
+                    List.sortBy (\a -> Nonempty.length a.locations)
+
+                Difficulty ->
+                    List.sortBy .difficulty
     in
     div []
-        [ bar
-        , List.sortBy .name adventures
+        [ toggleBar
+        , toggles
+        , adventures
+            |> applyFilter
+            |> applySort
             |> List.map renderAdventureCard
             |> ul [ class "cards" ]
         ]
@@ -339,7 +458,7 @@ renderAdventureCard : Adventure -> Html Msg
 renderAdventureCard adventure =
     let
         wheelchairInfo =
-            if adventure.wheelchair_accessible then
+            if adventure.wheelchairAccessible then
                 "Wheelchair Accessible"
 
             else

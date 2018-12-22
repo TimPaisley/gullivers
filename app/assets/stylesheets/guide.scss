@@ -219,6 +219,31 @@ svg {
     }
 }
 
+.toggle-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    margin: 10px 0;
+
+    .section {
+        margin: 0 5px;
+        padding: 10px;
+        font-size: 0.8rem;
+        border-radius: 5px;
+
+        cursor: pointer;
+        user-select: none;
+
+        opacity: 0.5;
+
+        &.selected {
+            opacity: 1;
+            color: white;
+            background-color: $text-color;
+        }
+    }
+}
+
 .action-button {
     margin: 20px;
     padding: 30px 20px;

@@ -5517,6 +5517,16 @@ var author$project$Main$renderAdventureMap = F4(
 			return elm$html$Html$text('Adventure 404');
 		}
 	});
+var author$project$Main$ChangeFilter = function (a) {
+	return {$: 'ChangeFilter', a: a};
+};
+var author$project$Main$ChangeSort = function (a) {
+	return {$: 'ChangeSort', a: a};
+};
+var author$project$Main$ChangeToggle = function (a) {
+	return {$: 'ChangeToggle', a: a};
+};
+var author$project$Main$NoOp = {$: 'NoOp'};
 var author$project$Main$ViewAdventureMap = function (a) {
 	return {$: 'ViewAdventureMap', a: a};
 };
@@ -5541,7 +5551,7 @@ var elm$html$Html$Events$onClick = function (msg) {
 		elm$json$Json$Decode$succeed(msg));
 };
 var author$project$Main$renderAdventureCard = function (adventure) {
-	var wheelchairInfo = adventure.wheelchair_accessible ? 'Wheelchair Accessible' : '';
+	var wheelchairInfo = adventure.wheelchairAccessible ? 'Wheelchair Accessible' : '';
 	var fill = (adventure.difficulty / 5) * 100;
 	var category = function () {
 		var _n0 = adventure.category;
@@ -5663,6 +5673,38 @@ var author$project$Main$renderAdventureCard = function (adventure) {
 					]))
 			]));
 };
+var author$project$Types$Filter = {$: 'Filter'};
+var author$project$Types$Sort = {$: 'Sort'};
+var author$project$Types$Accessible = {$: 'Accessible'};
+var author$project$Types$All = {$: 'All'};
+var author$project$Types$Simple = {$: 'Simple'};
+var author$project$Types$allFilters = _List_fromArray(
+	[author$project$Types$All, author$project$Types$Accessible, author$project$Types$Simple]);
+var author$project$Types$Difficulty = {$: 'Difficulty'};
+var author$project$Types$Name = {$: 'Name'};
+var author$project$Types$Size = {$: 'Size'};
+var author$project$Types$allSorts = _List_fromArray(
+	[author$project$Types$Name, author$project$Types$Size, author$project$Types$Difficulty]);
+var author$project$Types$filterToString = function (filter) {
+	switch (filter.$) {
+		case 'All':
+			return 'All';
+		case 'Accessible':
+			return 'Accessible';
+		default:
+			return 'Simple';
+	}
+};
+var author$project$Types$sortToString = function (sort) {
+	switch (sort.$) {
+		case 'Name':
+			return 'Name';
+		case 'Size':
+			return 'Size';
+		default:
+			return 'Difficulty';
+	}
+};
 var danmarcab$material_icons$Material$Icons$Content$filter_list = A2(
 	danmarcab$material_icons$Material$Icons$Internal$icon,
 	'0 0 48 48',
@@ -5691,90 +5733,220 @@ var danmarcab$material_icons$Material$Icons$Content$sort = A2(
 		]));
 var elm$core$List$sortBy = _List_sortBy;
 var elm$html$Html$ul = _VirtualDom_node('ul');
-var author$project$Main$renderAdventures = function (adventures) {
-	var bar = A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('vertical-bar')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('section main')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('title')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Adventures')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('subtitle')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Showing All')
-							]))
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('section icon')
-					]),
-				_List_fromArray(
-					[
-						A2(danmarcab$material_icons$Material$Icons$Content$filter_list, avh4$elm_color$Color$darkGrey, 20),
-						elm$html$Html$text('Filter')
-					])),
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('section icon')
-					]),
-				_List_fromArray(
-					[
-						A2(danmarcab$material_icons$Material$Icons$Content$sort, avh4$elm_color$Color$darkGrey, 20),
-						elm$html$Html$text('Sort')
-					]))
-			]));
-	return A2(
-		elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				bar,
-				A2(
-				elm$html$Html$ul,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('cards')
-					]),
-				A2(
-					elm$core$List$map,
-					author$project$Main$renderAdventureCard,
+var author$project$Main$renderAdventures = F2(
+	function (adventures, display) {
+		var toggleAction = function (toggle) {
+			return _Utils_eq(
+				elm$core$Maybe$Just(toggle),
+				display.toggle) ? author$project$Main$ChangeToggle(elm$core$Maybe$Nothing) : author$project$Main$ChangeToggle(
+				elm$core$Maybe$Just(toggle));
+		};
+		var toggleBar = A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('vertical-bar')
+				]),
+			_List_fromArray(
+				[
 					A2(
-						elm$core$List$sortBy,
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('section main')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('title')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Adventures')
+								])),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('subtitle')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Showing All')
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('section icon'),
+							elm$html$Html$Events$onClick(
+							toggleAction(author$project$Types$Filter))
+						]),
+					_List_fromArray(
+						[
+							A2(danmarcab$material_icons$Material$Icons$Content$filter_list, avh4$elm_color$Color$darkGrey, 20),
+							elm$html$Html$text('Filter')
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('section icon'),
+							elm$html$Html$Events$onClick(
+							toggleAction(author$project$Types$Sort))
+						]),
+					_List_fromArray(
+						[
+							A2(danmarcab$material_icons$Material$Icons$Content$sort, avh4$elm_color$Color$darkGrey, 20),
+							elm$html$Html$text('Sort')
+						]))
+				]));
+		var applySort = function () {
+			var _n5 = display.sort;
+			switch (_n5.$) {
+				case 'Name':
+					return elm$core$List$sortBy(
 						function ($) {
 							return $.name;
-						},
-						adventures)))
-			]));
-};
+						});
+				case 'Size':
+					return elm$core$List$sortBy(
+						function (a) {
+							return mgold$elm_nonempty_list$List$Nonempty$length(a.locations);
+						});
+				default:
+					return elm$core$List$sortBy(
+						function ($) {
+							return $.difficulty;
+						});
+			}
+		}();
+		var applyFilter = function () {
+			var _n3 = display.filter;
+			switch (_n3.$) {
+				case 'All':
+					return elm$core$List$filter(
+						function (_n4) {
+							return true;
+						});
+				case 'Accessible':
+					return elm$core$List$filter(
+						function ($) {
+							return $.wheelchairAccessible;
+						});
+				default:
+					return elm$core$List$filter(
+						function (a) {
+							return a.difficulty < 3;
+						});
+			}
+		}();
+		var action = F3(
+			function (comparison, msg, selection) {
+				return _Utils_eq(selection, comparison) ? author$project$Main$NoOp : msg(selection);
+			});
+		var toggles = function () {
+			var _n0 = display.toggle;
+			if (_n0.$ === 'Just') {
+				if (_n0.a.$ === 'Filter') {
+					var _n1 = _n0.a;
+					var filterAction = A2(action, display.filter, author$project$Main$ChangeFilter);
+					var section = function (filter) {
+						return A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$classList(
+									_List_fromArray(
+										[
+											_Utils_Tuple2('section', true),
+											_Utils_Tuple2(
+											'selected',
+											_Utils_eq(display.filter, filter))
+										])),
+									elm$html$Html$Events$onClick(
+									filterAction(filter))
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									author$project$Types$filterToString(filter))
+								]));
+					};
+					return A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('toggle-section')
+							]),
+						A2(elm$core$List$map, section, author$project$Types$allFilters));
+				} else {
+					var _n2 = _n0.a;
+					var sortAction = A2(action, display.sort, author$project$Main$ChangeSort);
+					var section = function (sort) {
+						return A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$classList(
+									_List_fromArray(
+										[
+											_Utils_Tuple2('section', true),
+											_Utils_Tuple2(
+											'selected',
+											_Utils_eq(display.sort, sort))
+										])),
+									elm$html$Html$Events$onClick(
+									sortAction(sort))
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									author$project$Types$sortToString(sort))
+								]));
+					};
+					return A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('toggle-section')
+							]),
+						A2(elm$core$List$map, section, author$project$Types$allSorts));
+				}
+			} else {
+				return A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('toggle-section')
+						]),
+					_List_Nil);
+			}
+		}();
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					toggleBar,
+					toggles,
+					A2(
+					elm$html$Html$ul,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('cards')
+						]),
+					A2(
+						elm$core$List$map,
+						author$project$Main$renderAdventureCard,
+						applySort(
+							applyFilter(adventures))))
+				]));
+	});
 var elm$html$Html$Attributes$target = elm$html$Html$Attributes$stringProperty('target');
 var author$project$Main$renderFooter = A2(
 	elm$html$Html$div,
@@ -5928,56 +6100,57 @@ var author$project$Main$renderProfile = A2(
 					elm$html$Html$text('Log Out')
 				]))
 		]));
-var author$project$Main$renderHomeScreen = function (adventures) {
-	var header = A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('header')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$div,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('brand logo')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('title')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Gulliver\'s Guide')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('subtitle')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('to Wellington')
-							]))
-					])),
-				author$project$Main$renderProfile
-			]));
-	return A2(
-		elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				header,
-				author$project$Main$renderAdventures(adventures),
-				author$project$Main$renderFooter
-			]));
-};
+var author$project$Main$renderHomeScreen = F2(
+	function (adventures, display) {
+		var header = A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('header')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('brand logo')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('title')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Gulliver\'s Guide')
+								])),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('subtitle')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('to Wellington')
+								]))
+						])),
+					author$project$Main$renderProfile
+				]));
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					header,
+					A2(author$project$Main$renderAdventures, adventures, display),
+					author$project$Main$renderFooter
+				]));
+	});
 var author$project$Main$renderLoadingScreen = elm$html$Html$text('LOADING...');
 var author$project$Main$view = function (model) {
 	return A2(
@@ -5995,7 +6168,7 @@ var author$project$Main$view = function (model) {
 						var adventures = _n0.a;
 						var _n1 = model.screen;
 						if (_n1.$ === 'Home') {
-							return author$project$Main$renderHomeScreen(adventures);
+							return A2(author$project$Main$renderHomeScreen, adventures, model.cardDisplay);
 						} else {
 							var id = _n1.a;
 							var idx = _n1.b;
@@ -6155,8 +6328,8 @@ var author$project$API$decodeLocations = function () {
 	return author$project$API$decodeNonempty(decodeLocation);
 }();
 var author$project$Types$Adventure = F9(
-	function (id, name, image, category, description, locations, badgeUrl, difficulty, wheelchair_accessible) {
-		return {badgeUrl: badgeUrl, category: category, description: description, difficulty: difficulty, id: id, image: image, locations: locations, name: name, wheelchair_accessible: wheelchair_accessible};
+	function (id, name, image, category, description, locations, badgeUrl, difficulty, wheelchairAccessible) {
+		return {badgeUrl: badgeUrl, category: category, description: description, difficulty: difficulty, id: id, image: image, locations: locations, name: name, wheelchairAccessible: wheelchairAccessible};
 	});
 var elm$json$Json$Decode$bool = _Json_decodeBool;
 var author$project$API$decodeAdventure = A3(
@@ -7144,11 +7317,12 @@ var krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 var krisajenkins$remotedata$RemoteData$sendRequest = elm$http$Http$send(krisajenkins$remotedata$RemoteData$fromResult);
 var author$project$Main$init = F3(
 	function (flags, url, key) {
+		var defaultCardDisplay = {filter: author$project$Types$All, sort: author$project$Types$Name, toggle: elm$core$Maybe$Nothing};
 		var _n0 = A2(author$project$Main$screenFromUrl, krisajenkins$remotedata$RemoteData$NotAsked, url);
 		var screen = _n0.a;
 		var cmd = _n0.b;
 		return _Utils_Tuple2(
-			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, flags: flags, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
+			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
 			elm$core$Platform$Cmd$batch(
 				_List_fromArray(
 					[
@@ -7520,12 +7694,45 @@ var author$project$Main$update = F2(
 						author$project$Main$RedirectHome,
 						krisajenkins$remotedata$RemoteData$sendRequest(
 							author$project$API$logOutRequest(model.flags.token))));
-			default:
+			case 'RedirectHome':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{screen: author$project$Types$Home}),
 					elm$browser$Browser$Navigation$load('/'));
+			case 'ChangeToggle':
+				var newToggle = msg.a;
+				var cardDisplay = model.cardDisplay;
+				var newCardDisplay = _Utils_update(
+					cardDisplay,
+					{toggle: newToggle});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{cardDisplay: newCardDisplay}),
+					elm$core$Platform$Cmd$none);
+			case 'ChangeFilter':
+				var newFilter = msg.a;
+				var cardDisplay = model.cardDisplay;
+				var newCardDisplay = _Utils_update(
+					cardDisplay,
+					{filter: newFilter});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{cardDisplay: newCardDisplay}),
+					elm$core$Platform$Cmd$none);
+			default:
+				var newSort = msg.a;
+				var cardDisplay = model.cardDisplay;
+				var newCardDisplay = _Utils_update(
+					cardDisplay,
+					{sort: newSort});
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{cardDisplay: newCardDisplay}),
+					elm$core$Platform$Cmd$none);
 		}
 	});
 var elm$browser$Browser$application = _Browser_application;
