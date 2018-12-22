@@ -2,8 +2,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidGltcGFpc2xleXdjYyIsImEiOiJjam9mODZ5bnIwMXFpM
 // const mapStyle = 'mapbox://styles/timpaisleywcc/cjpcdf5taanva2rju1u7luuyo';
 // const markerColor = '#FFCC00';
 
-const mapStyle = 'mapbox://styles/timpaisleywcc/cjp2dq5g420mw2sqimr5unpup';
-const markerColor = '#769e8a';
+var mapStyle = 'mapbox://styles/timpaisleywcc/cjp2dq5g420mw2sqimr5unpup';
+var markerColor = '#769e8a';
 
 function onElementCreate(id, callback) {
     if (document.getElementById(id)) {
