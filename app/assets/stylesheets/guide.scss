@@ -33,11 +33,11 @@ a {
     color: inherit;
     text-decoration: underline;
 
-    display: flex;
-    justify-content: center;
-    align-content: center;
+    &.unstyled {
+        text-decoration: none;
+    }
 
-    &:hover {
+    &:not(.unstyled):hover {
         color: #333;
     }
 }
@@ -54,6 +54,10 @@ svg {
 
 .home-page {
     text-align: center;
+
+    .header .brand.logo {
+        flex: 0 1 auto;
+    }
 
     .btn-section {
         margin-top: 20px;
@@ -124,6 +128,7 @@ svg {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    text-align: left;
 
     > div {
         margin-bottom: 20px;

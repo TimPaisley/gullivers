@@ -1,10 +1,20 @@
 <div class="home-page">
-    <h1>Gulliver's Guide</h1>
+    <div class="header">
+        <div class="brand logo">
+            <div class="title">Gulliver's Guide</div>
+            <div class="subtitle">to Wellington</div>
+        </div>
+    </div>
 
     <div class="pillars">
         <div class="pillar">
-            <p>Sign up for free and start exploring!</p>
-            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary" %>
+            <%- if Devise.mappings[:user].registerable? && controller_name != 'registrations' %>
+                <p>Sign up for free and start exploring!</p>
+                <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-primary" %>
+            <% else -%>
+                <p>We're not quite ready for new users yet, sorry!</p>
+                <div class="btn btn-primary disabled">Sign Up</div>
+            <% end -%>
         </div>
 
         <div class="pillar">
