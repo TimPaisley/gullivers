@@ -9,7 +9,7 @@ import Html.Attributes exposing (class, classList, href, id, src, style, target)
 import Html.Events exposing (onClick)
 import List.Extra as ListX
 import List.Nonempty as Nonempty exposing (Nonempty)
-import Material.Icons.Action exposing (exit_to_app, feedback, home, subject)
+import Material.Icons.Action exposing (accessible, exit_to_app, feedback, home, subject)
 import Material.Icons.Content exposing (filter_list, sort)
 import Material.Icons.Navigation exposing (chevron_left, chevron_right)
 import Material.Icons.Social exposing (share)
@@ -318,21 +318,11 @@ renderFooter =
 renderProfile : Html Msg
 renderProfile =
     div [ class "vertical-bar" ]
-        [ div [ class "section set-size" ]
-            [ div [ class "pie-wrapper progress-80" ]
-                [ span [ class "label" ]
-                    [ text "80"
-                    , span [ class "smaller" ] [ text "%" ]
-                    ]
-                , div [ class "pie" ]
-                    [ div [ class "left-side half-circle" ] []
-                    , div [ class "right-side half-circle" ] []
-                    ]
-                ]
-            ]
+        [ div [ class "section" ]
+            [ div [ class "explorer-icon" ] [] ]
         , div [ class "section main" ]
             [ div [ class "title" ] [ text "Development" ]
-            , div [ class "subtitle" ] [ text "Junior Adventurer" ]
+            , div [ class "subtitle" ] [ text "Junior Explorer" ]
             ]
         , div [ class "section icon", onClick LogOut ]
             [ exit_to_app Color.darkGrey 20, text "Log Out" ]
@@ -371,9 +361,7 @@ renderAdventures adventures display =
         toggleBar =
             div [ class "vertical-bar" ]
                 [ div [ class "section main" ]
-                    [ div [ class "title" ] [ text "Adventures" ]
-                    , div [ class "subtitle" ] [ text "Showing All" ]
-                    ]
+                    [ div [ class "title" ] [ text "Adventures" ] ]
                 , div [ class "section icon", onClick <| toggleAction Filter ]
                     [ filter_list Color.darkGrey 20, text "Filter" ]
                 , div [ class "section icon", onClick <| toggleAction Sort ]
@@ -464,10 +452,10 @@ renderAdventureCard adventure =
     let
         wheelchairInfo =
             if adventure.wheelchairAccessible then
-                "Wheelchair Accessible"
+                accessible Color.darkGrey 20
 
             else
-                ""
+                text ""
 
         fill =
             toFloat adventure.difficulty / 5 * 100
@@ -479,6 +467,11 @@ renderAdventureCard adventure =
 
                 Collection ->
                     "Collection"
+
+        difficulty =
+            [ "Very Easy", "Easy", "Medium", "Hard", "Very Hard" ]
+                |> ListX.getAt (adventure.difficulty - 1)
+                |> Maybe.withDefault "Difficulty Unknown"
     in
     li [ class "card-item" ]
         [ div [ class "card", onClick <| ViewAdventureMap adventure.id ]
@@ -488,9 +481,9 @@ renderAdventureCard adventure =
                 [ div [ class "title" ] [ text adventure.name ]
                 , div [ class "subtitle" ] [ text category ]
                 , p [ class "description" ] [ text adventure.description ]
-                , div [ class "information" ]
-                    [ div [] [ text wheelchairInfo ]
-                    , div [] [ text <| "Difficulty Level " ++ String.fromInt adventure.difficulty ]
+                , div [ class "vertical-bar small" ]
+                    [ div [ class "section main" ] [ text difficulty ]
+                    , div [ class "section" ] [ wheelchairInfo ]
                     ]
                 ]
             ]

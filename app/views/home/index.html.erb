@@ -6,12 +6,19 @@
         </div>
     </div>
 
-    <p>
-        Gulliver's Guide is currently under construction, which means we're unfortunately not accepting new explorers just yet.
-        If you'd like to stay up to date with new developments, enter your email below and we'll keep you in the loop.
-    </p>
+    <div class="main">
+        <p class="notice"><%= notice %></p>
+        <p class="alert"><%= alert %></p>
 
-    <p>
-        If a preview account has been created for you, you can <%= link_to "log in here.", new_user_session_path %>
+        <div class="card">
+            <div class="content">
+                <p>Gulliver's Guide is still under construction, which means we're unfortunately not accepting new explorers just yet.</p>
+                <p>If you'd like to stay up to date with new developments, enter your email below and we'll keep you in the loop.</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="btn">
+        If a preview account has been created for you, you can <%= link_to "log in here", new_user_session_path %>.
     </p>
 </div>

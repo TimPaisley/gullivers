@@ -5583,13 +5583,47 @@ var author$project$Main$NoOp = {$: 'NoOp'};
 var author$project$Main$ViewAdventureMap = function (a) {
 	return {$: 'ViewAdventureMap', a: a};
 };
+var elm$svg$Svg$circle = elm$svg$Svg$trustedNode('circle');
+var elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
+var elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
+var elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
+var danmarcab$material_icons$Material$Icons$Action$accessible = A2(
+	danmarcab$material_icons$Material$Icons$Internal$icon,
+	'0 0 48 48',
+	_List_fromArray(
+		[
+			A2(
+			elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$d('M38 26v-4c-3.07.04-6.18-1.5-8.14-3.67l-2.59-2.86c-.35-.38-.77-.68-1.22-.91-.02-.01-.03-.02-.04-.03h-.02c-.69-.4-1.51-.6-2.38-.51-2.08.2-3.61 2.07-3.61 4.16V30c0 2.21 1.79 4 4 4h10v10h4V33c0-2.21-1.79-4-4-4h-6v-6.9c2.58 2.13 6.49 3.89 10 3.9zM25.65 36c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6 0-2.61 1.67-4.83 4-5.65V24.2c-4.56.93-8 4.96-8 9.8 0 5.52 4.48 10 10 10 4.84 0 8.87-3.44 9.8-8h-4.15z')
+				]),
+			_List_Nil),
+			A2(
+			elm$svg$Svg$circle,
+			_List_fromArray(
+				[
+					elm$svg$Svg$Attributes$cx('24'),
+					elm$svg$Svg$Attributes$cy('8'),
+					elm$svg$Svg$Attributes$r('4')
+				]),
+			_List_Nil)
+		]));
 var elm$html$Html$li = _VirtualDom_node('li');
 var elm$html$Html$p = _VirtualDom_node('p');
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
 var author$project$Main$renderAdventureCard = function (adventure) {
-	var wheelchairInfo = adventure.wheelchairAccessible ? 'Wheelchair Accessible' : '';
+	var wheelchairInfo = adventure.wheelchairAccessible ? A2(danmarcab$material_icons$Material$Icons$Action$accessible, avh4$elm_color$Color$darkGrey, 20) : elm$html$Html$text('');
 	var fill = (adventure.difficulty / 5) * 100;
+	var difficulty = A2(
+		elm$core$Maybe$withDefault,
+		'Difficulty Unknown',
+		A2(
+			elm_community$list_extra$List$Extra$getAt,
+			adventure.difficulty - 1,
+			_List_fromArray(
+				['Very Easy', 'Easy', 'Medium', 'Hard', 'Very Hard'])));
 	var category = function () {
 		var _n0 = adventure.category;
 		if (_n0.$ === 'Path') {
@@ -5686,25 +5720,28 @@ var author$project$Main$renderAdventureCard = function (adventure) {
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('information')
+										elm$html$Html$Attributes$class('vertical-bar small')
 									]),
 								_List_fromArray(
 									[
 										A2(
 										elm$html$Html$div,
-										_List_Nil,
 										_List_fromArray(
 											[
-												elm$html$Html$text(wheelchairInfo)
+												elm$html$Html$Attributes$class('section main')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text(difficulty)
 											])),
 										A2(
 										elm$html$Html$div,
-										_List_Nil,
 										_List_fromArray(
 											[
-												elm$html$Html$text(
-												'Difficulty Level ' + elm$core$String$fromInt(adventure.difficulty))
-											]))
+												elm$html$Html$Attributes$class('section')
+											]),
+										_List_fromArray(
+											[wheelchairInfo]))
 									]))
 							]))
 					]))
@@ -5803,16 +5840,6 @@ var author$project$Main$renderAdventures = F2(
 							_List_fromArray(
 								[
 									elm$html$Html$text('Adventures')
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('subtitle')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('Showing All')
 								]))
 						])),
 					A2(
@@ -6025,7 +6052,6 @@ var danmarcab$material_icons$Material$Icons$Action$exit_to_app = A2(
 				]),
 			_List_Nil)
 		]));
-var elm$html$Html$span = _VirtualDom_node('span');
 var author$project$Main$renderProfile = A2(
 	elm$html$Html$div,
 	_List_fromArray(
@@ -6038,7 +6064,7 @@ var author$project$Main$renderProfile = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('section set-size')
+					elm$html$Html$Attributes$class('section')
 				]),
 			_List_fromArray(
 				[
@@ -6046,54 +6072,9 @@ var author$project$Main$renderProfile = A2(
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('pie-wrapper progress-80')
+							elm$html$Html$Attributes$class('explorer-icon')
 						]),
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$span,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('label')
-								]),
-							_List_fromArray(
-								[
-									elm$html$Html$text('80'),
-									A2(
-									elm$html$Html$span,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('smaller')
-										]),
-									_List_fromArray(
-										[
-											elm$html$Html$text('%')
-										]))
-								])),
-							A2(
-							elm$html$Html$div,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('pie')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('left-side half-circle')
-										]),
-									_List_Nil),
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('right-side half-circle')
-										]),
-									_List_Nil)
-								]))
-						]))
+					_List_Nil)
 				])),
 			A2(
 			elm$html$Html$div,
@@ -6121,7 +6102,7 @@ var author$project$Main$renderProfile = A2(
 						]),
 					_List_fromArray(
 						[
-							elm$html$Html$text('Junior Adventurer')
+							elm$html$Html$text('Junior Explorer')
 						]))
 				])),
 			A2(

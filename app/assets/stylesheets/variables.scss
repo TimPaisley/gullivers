@@ -1,5 +1,6 @@
+$gullivers-green: #417505;
 $highlight: #696969;
-$text-color: #999999;
+$text-color: #696969;
 $background: #f0f0f0;
 
 // $highlight: #ffcc00;
@@ -8,7 +9,18 @@ $background: #f0f0f0;
 
 @mixin heading {
     font-family: 'Helvetica', sans-serif;
-    font-size: 1rem;
+    color: $gullivers-green;
+    font-size: 1.2rem;
+    opacity: 1;
+    margin: 0;
+    font-weight: 300;
+}
+
+@mixin sub-heading {
+    font-family: 'Helvetica', sans-serif;
+    color: $text-color;
+    font-size: 0.8rem;
+    opacity: 0.8;
     margin: 0;
     font-weight: 300;
 }

@@ -52,11 +52,46 @@ svg {
     margin: 0.2rem;
 }
 
+.landing-page {
+    &:before {
+        content: "";
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: 100%;
+        z-index: -1;
+        display: block;
+
+        background-image: url(home-bg.jpg);
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        filter: blur(20px);
+    }
+}
+
+.alert,
+.notice {
+    color: white;
+    font-weight: 700;
+}
+
 .home-page {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
-    .header .brand.logo {
-        flex: 0 1 auto;
+    .main {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .field {
+        display: flex;
+        align-items: center;
     }
 
     .btn-section {
@@ -66,52 +101,32 @@ svg {
         align-items: center;
     }
 
-    .btn,
-    input:not([type="checkbox"]) {
+    .btn {
+        background: transparent;
+        border: none;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: white;
+        font-weight: 700;
+        text-decoration: none;
+
+        &.small {
+            opacity: 0.6;
+        }
+    }
+
+    input:not([type="checkbox"]):not([type="submit"]) {
         display: block;
-        border: 1px solid #696969;
+        border: none;
         border-radius: 4px;
+        box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
         padding: 10px;
-        background-color: transparent;
+        background-color: white;
         color: #696969;
         min-width: 200px;
         text-decoration: none;
-        font-size: 1rem;
+        font-size: 0.8rem;
         margin: 5px 0;
-        
-        &:not([type="email"]):not([type="password"]) {
-            text-align: center;
-            text-transform: uppercase;
-            font-weight: 300;
-            font-size: 1.25rem;
-            cursor: pointer;
-
-            &:hover {
-                color: #333;
-                border-color: #333;
-            }
-        }
-    }
-    
-    .pillars {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: stretch;
-        align-items: flex-end;
-    
-        &.big {
-            font-size: 1.5rem;
-            font-weight: 300;
-        }
-    
-        .pillar {
-            flex: 1;
-            padding: 10px 30px;
-        }
-    }
-
-    .description {
-        text-align: left;
     }
 }
 
@@ -127,7 +142,7 @@ svg {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     text-align: left;
 
     > div {
@@ -135,7 +150,6 @@ svg {
     }
 
     .brand {
-        flex: 3 0 auto;
         padding: 0 10px;
 
         .title {
@@ -151,9 +165,13 @@ svg {
         }
 
         &.logo {
+            position: relative;
+            text-align: center;
+            width: 340px;
+
             .title {
                 @include heading;
-                color: $text-color;
+                color: $gullivers-green;
                 font-family: 'Dancing Script', cursive;
                 font-size: 3rem;
                 font-weight: 600;
@@ -163,10 +181,9 @@ svg {
     
             .subtitle {
                 color: $highlight;
-                font-weight: 600;
-                font-style: italic;
-                padding-left: 20px;
+                font-weight: 300;
                 font-size: 1.5rem;
+                opacity: 1;
             }
         }
     }
@@ -195,13 +212,27 @@ svg {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
+    padding: 0 0.5rem;
+
+    &.small {
+        font-size: 0.8rem;
+        opacity: 0.5;
+    }
 
     .section {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
-        padding: 10px;
+        padding: 0 10px;
+
+        &:first-child {
+            padding-left: 0;
+        }
+
+        &:last-child {
+            padding-right: 0;
+        }
 
         &.main {
             flex: 1;
@@ -211,6 +242,7 @@ svg {
             flex-direction: row;
             align-items: center;
             font-size: 0.8rem;
+            text-transform: uppercase;
 
             user-select: none;
             cursor: pointer;
@@ -222,8 +254,7 @@ svg {
         }
 
         .subtitle {
-            font-size: 0.8rem;
-            opacity: 0.5;
+            @include sub-heading;
         }
     }
 }
@@ -338,7 +369,7 @@ svg {
     }
 
     .subtitle {
-        @include heading;
+        @include sub-heading;
         font-size: 0.8rem;
         opacity: 0.8;
     }
@@ -409,4 +440,11 @@ svg {
         left: 0;
         background-color: $highlight;
     }
+}
+
+.explorer-icon {
+    border: 1px solid $highlight;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
