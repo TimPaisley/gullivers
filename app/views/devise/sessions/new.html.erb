@@ -28,7 +28,7 @@
             </div>
 
             <div class="btn-section">
-                <div class="vertical-bar">
+                <div class="horizontal-bar">
                     <div class="section">
                         <% if devise_mapping.rememberable? -%>
                             <div class="field">
@@ -37,6 +37,8 @@
                             </div>
                         <% end -%>
                     </div>
+
+                    <div class="section"></div>
 
                     <div class="section">
                         <%= f.submit "Log In", class: "btn" %>

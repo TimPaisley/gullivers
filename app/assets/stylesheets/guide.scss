@@ -28,29 +28,96 @@ body {
     -moz-font-feature-settings: "liga" on;
 }
 
+#wrapper {
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    height: 100%;
+}
+
 a {
     text-decoration: none;
     color: inherit;
     text-decoration: underline;
 
-    &.unstyled {
-        text-decoration: none;
-    }
-
-    &:not(.unstyled):hover {
+    &:hover {
         color: #333;
     }
-}
-
-h1, h2, h3 {
-    @include heading;
-    margin: 10px 0;
-    text-decoration: none;
 }
 
 svg {
     margin: 0.2rem;
 }
+
+// ==============
+// HORIZONTAL BAR
+// ==============
+
+.horizontal-bar {
+    flex: 1 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    &.small {
+        font-size: 0.8rem;
+        opacity: 0.5;
+    }
+
+    &.wrap {
+        flex-wrap: wrap;
+
+        > .section {
+            margin-bottom: 10px;
+        }
+    }
+
+    &.margins {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 0 10px;
+
+        &:first-child,
+        &:last-child {
+            padding: 0;
+        }
+
+        &.main {
+            flex: 1;
+        }
+
+        &.icon {
+            flex-direction: row;
+            align-items: center;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .title {
+            @include heading;
+            text-align: center;
+        }
+
+        .subtitle {
+            @include sub-heading;
+        }
+    }
+}
+
+// ============
+// LANDING PAGE
+// ============
 
 .landing-page {
     &:before {
@@ -130,23 +197,17 @@ svg {
     }
 }
 
-#wrapper {
-    max-width: 960px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 10px;
-    height: 100%;
-}
+// ===========
+// APPLICATION
+// ===========
 
 .header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    text-align: left;
+    margin-bottom: 10px;
 
-    > div {
-        margin-bottom: 20px;
+    .section,
+    .horizontal-bar {
+        margin-left: 0;
+        margin-right: 0;
     }
 
     .brand {
@@ -166,7 +227,7 @@ svg {
 
         &.logo {
             position: relative;
-            text-align: center;
+            align-items: center;
             width: 340px;
 
             .title {
@@ -207,66 +268,13 @@ svg {
     }
 }
 
-.vertical-bar {
-    flex: 1 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    padding: 0 0.5rem;
-
-    &.small {
-        font-size: 0.8rem;
-        opacity: 0.5;
-    }
-
-    .section {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        padding: 0 10px;
-
-        &:first-child {
-            padding-left: 0;
-        }
-
-        &:last-child {
-            padding-right: 0;
-        }
-
-        &.main {
-            flex: 1;
-        }
-
-        &.icon {
-            flex-direction: row;
-            align-items: center;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-
-            user-select: none;
-            cursor: pointer;
-        }
-
-        .title {
-            @include heading;
-            text-align: center;
-        }
-
-        .subtitle {
-            @include sub-heading;
-        }
-    }
-}
-
 .toggle-section {
     display: flex;
     justify-content: flex-end;
     align-items: stretch;
-    margin: 10px 0;
 
     .section {
-        margin: 0 5px;
+        margin: 5px;
         padding: 10px;
         font-size: 0.8rem;
         border-radius: 5px;
@@ -295,22 +303,23 @@ svg {
 }
 
 #adventure-map-screen {
-    .vertical-bar {
+    .horizontal-bar {
         position: absolute;
         left: 0;
         right: 0;
         z-index: 100;
+        padding: 10px;
         background-color: white;
-        border-radius: 0.25rem;
-        box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
-        margin: 10px;
         
         &.top {
             top: 0;
         }
 
         &.bottom {
+            margin: 10px;
             bottom: 0;
+            border-radius: 0.25rem;
+            box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
 
             .main {
                 align-items: center;

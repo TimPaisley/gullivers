@@ -5430,7 +5430,7 @@ var author$project$Main$renderAdventureMap = F5(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('vertical-bar top')
+						elm$html$Html$Attributes$class('horizontal-bar top')
 					]),
 				_List_fromArray(
 					[
@@ -5517,7 +5517,7 @@ var author$project$Main$renderAdventureMap = F5(
 						elm$html$Html$div,
 						_List_fromArray(
 							[
-								elm$html$Html$Attributes$class('vertical-bar bottom')
+								elm$html$Html$Attributes$class('horizontal-bar bottom')
 							]),
 						_List_fromArray(
 							[
@@ -5720,7 +5720,7 @@ var author$project$Main$renderAdventureCard = function (adventure) {
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('vertical-bar small')
+										elm$html$Html$Attributes$class('horizontal-bar small')
 									]),
 								_List_fromArray(
 									[
@@ -5819,7 +5819,7 @@ var author$project$Main$renderAdventures = F2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('vertical-bar')
+					elm$html$Html$Attributes$class('horizontal-bar margins')
 				]),
 			_List_fromArray(
 				[
@@ -6056,7 +6056,7 @@ var author$project$Main$renderProfile = A2(
 	elm$html$Html$div,
 	_List_fromArray(
 		[
-			elm$html$Html$Attributes$class('vertical-bar')
+			elm$html$Html$Attributes$class('horizontal-bar wrap')
 		]),
 	_List_fromArray(
 		[
@@ -6109,13 +6109,62 @@ var author$project$Main$renderProfile = A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('section icon'),
-					elm$html$Html$Events$onClick(author$project$Main$LogOut)
+					elm$html$Html$Attributes$class('section')
+				]),
+			_List_Nil),
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('section')
 				]),
 			_List_fromArray(
 				[
-					A2(danmarcab$material_icons$Material$Icons$Action$exit_to_app, avh4$elm_color$Color$darkGrey, 20),
-					elm$html$Html$text('Log Out')
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('horizontal-bar nowrap')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('section icon'),
+									elm$html$Html$Events$onClick(author$project$Main$LogOut)
+								]),
+							_List_fromArray(
+								[
+									A2(danmarcab$material_icons$Material$Icons$Action$exit_to_app, avh4$elm_color$Color$darkGrey, 20),
+									elm$html$Html$text('Log Out')
+								])),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('section icon'),
+									elm$html$Html$Events$onClick(author$project$Main$LogOut)
+								]),
+							_List_fromArray(
+								[
+									A2(danmarcab$material_icons$Material$Icons$Action$exit_to_app, avh4$elm_color$Color$darkGrey, 20),
+									elm$html$Html$text('Settings')
+								])),
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('section icon'),
+									elm$html$Html$Events$onClick(author$project$Main$LogOut)
+								]),
+							_List_fromArray(
+								[
+									A2(danmarcab$material_icons$Material$Icons$Action$exit_to_app, avh4$elm_color$Color$darkGrey, 20),
+									elm$html$Html$text('Log Out')
+								]))
+						]))
 				]))
 		]));
 var author$project$Main$renderHomeScreen = F2(
@@ -6124,7 +6173,7 @@ var author$project$Main$renderHomeScreen = F2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('header')
+					elm$html$Html$Attributes$class('header horizontal-bar wrap margins')
 				]),
 			_List_fromArray(
 				[
@@ -6132,7 +6181,7 @@ var author$project$Main$renderHomeScreen = F2(
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('brand logo')
+							elm$html$Html$Attributes$class('section brand logo')
 						]),
 					_List_fromArray(
 						[
@@ -6157,7 +6206,21 @@ var author$project$Main$renderHomeScreen = F2(
 									elm$html$Html$text('to Wellington')
 								]))
 						])),
-					author$project$Main$renderProfile
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('section main')
+						]),
+					_List_Nil),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('section')
+						]),
+					_List_fromArray(
+						[author$project$Main$renderProfile]))
 				]));
 		return A2(
 			elm$html$Html$div,

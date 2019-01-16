@@ -315,36 +315,46 @@ renderFooter =
         ]
 
 
-renderProfile : Html Msg
-renderProfile =
-    div [ class "vertical-bar" ]
-        [ div [ class "section" ]
-            [ div [ class "explorer-icon" ] [] ]
-        , div [ class "section main" ]
-            [ div [ class "title" ] [ text "Development" ]
-            , div [ class "subtitle" ] [ text "Junior Explorer" ]
-            ]
-        , div [ class "section icon", onClick LogOut ]
-            [ exit_to_app Color.darkGrey 20, text "Log Out" ]
-        ]
-
-
 renderHomeScreen : List Adventure -> CardDisplay -> Html Msg
 renderHomeScreen adventures display =
     let
         header =
-            div [ class "header" ]
-                [ div [ class "brand logo" ]
+            div [ class "header horizontal-bar wrap margins" ]
+                [ div [ class "section brand logo" ]
                     [ div [ class "title" ] [ text "Gulliver's Guide" ]
                     , div [ class "subtitle" ] [ text "to Wellington" ]
                     ]
-                , renderProfile
+                , div [ class "section main" ] []
+                , div [ class "section" ] [ renderProfile ]
                 ]
     in
     div []
         [ header
         , renderAdventures adventures display
         , renderFooter
+        ]
+
+
+renderProfile : Html Msg
+renderProfile =
+    div [ class "horizontal-bar wrap" ]
+        [ div [ class "section" ]
+            [ div [ class "explorer-icon" ] [] ]
+        , div [ class "section main" ]
+            [ div [ class "title" ] [ text "Development" ]
+            , div [ class "subtitle" ] [ text "Junior Explorer" ]
+            ]
+        , div [ class "section" ] []
+        , div [ class "section" ]
+            [ div [ class "horizontal-bar nowrap" ]
+                [ div [ class "section icon", onClick LogOut ]
+                    [ exit_to_app Color.darkGrey 20, text "Log Out" ]
+                , div [ class "section icon", onClick LogOut ]
+                    [ exit_to_app Color.darkGrey 20, text "Settings" ]
+                , div [ class "section icon", onClick LogOut ]
+                    [ exit_to_app Color.darkGrey 20, text "Log Out" ]
+                ]
+            ]
         ]
 
 
@@ -359,7 +369,7 @@ renderAdventures adventures display =
                 ChangeToggle (Just toggle)
 
         toggleBar =
-            div [ class "vertical-bar" ]
+            div [ class "horizontal-bar margins" ]
                 [ div [ class "section main" ]
                     [ div [ class "title" ] [ text "Adventures" ] ]
                 , div [ class "section icon", onClick <| toggleAction Filter ]
@@ -481,7 +491,7 @@ renderAdventureCard adventure =
                 [ div [ class "title" ] [ text adventure.name ]
                 , div [ class "subtitle" ] [ text category ]
                 , p [ class "description" ] [ text adventure.description ]
-                , div [ class "vertical-bar small" ]
+                , div [ class "horizontal-bar small" ]
                     [ div [ class "section main" ] [ text difficulty ]
                     , div [ class "section" ] [ wheelchairInfo ]
                     ]
@@ -500,7 +510,7 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
         Just adventure ->
             let
                 header =
-                    div [ class "vertical-bar top" ]
+                    div [ class "horizontal-bar top" ]
                         [ a [ href "/", class "section icon" ]
                             [ home Color.darkGrey 20 ]
                         , div [ class "section main" ]
@@ -553,7 +563,7 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 , header
                 , infoToggleButton
                 , infoBox
-                , div [ class "vertical-bar bottom" ]
+                , div [ class "horizontal-bar bottom" ]
                     [ div [ class "section" ] [ previousLocation ]
                     , div [ class "section main" ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
