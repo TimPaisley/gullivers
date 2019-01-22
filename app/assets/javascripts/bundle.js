@@ -5533,7 +5533,7 @@ var author$project$Main$renderAdventureMap = F5(
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('section main')
+										elm$html$Html$Attributes$class('section main button')
 									]),
 								_List_fromArray(
 									[
@@ -5554,6 +5554,16 @@ var author$project$Main$renderAdventureMap = F5(
 										_List_fromArray(
 											[
 												elm$html$Html$text(location.name)
+											])),
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('subtitle')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('TAP TO ENABLE GPS')
 											]))
 									])),
 								A2(

@@ -565,9 +565,11 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 , infoBox
                 , div [ class "horizontal-bar bottom" ]
                     [ div [ class "section" ] [ previousLocation ]
-                    , div [ class "section main" ]
+                    , div [ class "section main button" ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
+                        , div [ class "subtitle" ]
+                            [ text "TAP TO ENABLE GPS" ]
                         ]
                     , div [ class "section" ] [ nextLocation ]
                     ]
