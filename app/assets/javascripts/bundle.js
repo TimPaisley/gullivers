@@ -5720,7 +5720,7 @@ var author$project$Main$renderAdventureCard = function (adventure) {
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('horizontal-bar small')
+										elm$html$Html$Attributes$class('horizontal-bar small align-end')
 									]),
 								_List_fromArray(
 									[

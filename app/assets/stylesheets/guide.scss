@@ -37,12 +37,15 @@ body {
 }
 
 a {
-    text-decoration: none;
     color: inherit;
-    text-decoration: underline;
+    opacity: 0.8;
+
+    &.unstyled {
+        text-decoration: none;
+    }
 
     &:hover {
-        color: #333;
+        opacity: 1;
     }
 }
 
@@ -58,7 +61,11 @@ svg {
     flex: 1 0 auto;
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+
+    &.align-end {
+        align-items: flex-end;
+    }
 
     &.small {
         font-size: 0.8rem;
@@ -129,7 +136,7 @@ svg {
         z-index: -1;
         display: block;
 
-        background-image: url(home-bg.jpg);
+        background-image: image-url('home-bg.jpg');
         background-position: center center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -176,6 +183,12 @@ svg {
         color: white;
         font-weight: 700;
         text-decoration: none;
+        opacity: 0.8;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 1;
+        }
 
         &.small {
             opacity: 0.6;
@@ -203,6 +216,8 @@ svg {
 
 .header {
     margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
 
     .section,
     .horizontal-bar {

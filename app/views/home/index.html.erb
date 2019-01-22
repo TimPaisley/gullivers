@@ -19,6 +19,8 @@
     </div>
 
     <p class="btn">
-        If a preview account has been created for you, you can <%= link_to "log in here", new_user_session_path %>.
+        <%= link_to new_user_session_path, class: "unstyled" do %>
+            If a preview account has been created for you, you can log in here.
+        <% end %>
     </p>
 </div>

@@ -491,7 +491,7 @@ renderAdventureCard adventure =
                 [ div [ class "title" ] [ text adventure.name ]
                 , div [ class "subtitle" ] [ text category ]
                 , p [ class "description" ] [ text adventure.description ]
-                , div [ class "horizontal-bar small" ]
+                , div [ class "horizontal-bar small align-end" ]
                     [ div [ class "section main" ] [ text difficulty ]
                     , div [ class "section" ] [ wheelchairInfo ]
                     ]
