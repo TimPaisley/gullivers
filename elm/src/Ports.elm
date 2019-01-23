@@ -1,4 +1,4 @@
-port module Ports exposing (MapOptions, getPosition, updateMap)
+port module Ports exposing (MapOptions, getPosition, receivePosition, updateMap)
 
 import Json.Decode as Json exposing (Value)
 import Types exposing (LatLng)
@@ -15,3 +15,6 @@ port updateMap : Maybe MapOptions -> Cmd msg
 
 
 port getPosition : () -> Cmd msg
+
+
+port receivePosition : (LatLng -> msg) -> Sub msg

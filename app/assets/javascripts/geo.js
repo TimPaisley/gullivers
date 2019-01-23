@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     function geo_success(position) {
-        console.log (position);
+        window.app.ports.receivePosition.send({ lat: position.coords.latitude, lng: position.coords.longitude });
     }
 
     function geo_error(error) {

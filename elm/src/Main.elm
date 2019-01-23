@@ -31,6 +31,7 @@ type alias Model =
     , visitResult : WebData ()
     , cardDisplay : CardDisplay
     , infoToggle : Bool
+    , lastKnownLocation : Maybe LatLng
     }
 
 
@@ -57,6 +58,7 @@ init flags url key =
       , visitResult = NotAsked
       , cardDisplay = defaultCardDisplay
       , infoToggle = False
+      , lastKnownLocation = Nothing
       }
     , Cmd.batch
         [ API.adventuresRequest flags.token
@@ -273,14 +275,11 @@ update msg model =
         ToggleInfo ->
             ( { model | infoToggle = not model.infoToggle }, Cmd.none )
 
-        
         GetPosition ->
-            ( model, Ports.getPosition ())
-
+            ( model, Ports.getPosition () )
 
         ReceivePosition position ->
-            Debug.log (Debug.toString position.lat)
-                <| ( model, Cmd.none )
+            ( { model | lastKnownLocation = Just position }, Cmd.none )
 
 
 
@@ -568,6 +567,14 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
 
                 indicatorFor l =
                     div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
+
+                lastKnownLocation =
+                    case model.lastKnownLocation of
+                        Just l ->
+                            String.fromFloat l.lat ++ ", " ++ String.fromFloat l.lng
+
+                        Nothing ->
+                            "TAP TO ENABLE GPS"
             in
             div [ id "adventure-map-screen" ]
                 [ div [ id "map" ] []
@@ -579,8 +586,7 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                     , div [ class "section main button", onClick GetPosition ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
-                        , div [ class "subtitle" ]
-                            [ text "TAP TO ENABLE GPS" ]
+                        , div [ class "subtitle" ] [ text lastKnownLocation ]
                         ]
                     , div [ class "section" ] [ nextLocation ]
                     ]
@@ -600,7 +606,16 @@ main =
         { view = document
         , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         , onUrlRequest = RequestUrl
         , onUrlChange = ChangeUrl
         }
+
+
+
+---- SUBSCRIPTIONS ----
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Ports.receivePosition ReceivePosition

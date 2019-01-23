@@ -5390,6 +5390,15 @@ var author$project$Main$renderAdventureMap = F5(
 					elm_community$list_extra$List$Extra$getAt,
 					locationIdx - 1,
 					mgold$elm_nonempty_list$List$Nonempty$toList(adventure.locations)));
+			var lastKnownLocation = function () {
+				var _n1 = model.lastKnownLocation;
+				if (_n1.$ === 'Just') {
+					var l = _n1.a;
+					return elm$core$String$fromFloat(l.lat) + (', ' + elm$core$String$fromFloat(l.lng));
+				} else {
+					return 'TAP TO ENABLE GPS';
+				}
+			}();
 			var infoToggleButton = A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -5565,7 +5574,7 @@ var author$project$Main$renderAdventureMap = F5(
 											]),
 										_List_fromArray(
 											[
-												elm$html$Html$text('TAP TO ENABLE GPS')
+												elm$html$Html$text(lastKnownLocation)
 											]))
 									])),
 								A2(
@@ -7422,7 +7431,7 @@ var author$project$Main$init = F3(
 		var screen = _n0.a;
 		var cmd = _n0.b;
 		return _Utils_Tuple2(
-			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, infoToggle: false, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
+			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, infoToggle: false, key: key, lastKnownLocation: elm$core$Maybe$Nothing, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
 			elm$core$Platform$Cmd$batch(
 				_List_fromArray(
 					[
@@ -7434,6 +7443,27 @@ var author$project$Main$init = F3(
 						cmd
 					])));
 	});
+var author$project$Main$ReceivePosition = function (a) {
+	return {$: 'ReceivePosition', a: a};
+};
+var elm$json$Json$Decode$float = _Json_decodeFloat;
+var author$project$Ports$receivePosition = _Platform_incomingPort(
+	'receivePosition',
+	A2(
+		elm$json$Json$Decode$andThen,
+		function (lng) {
+			return A2(
+				elm$json$Json$Decode$andThen,
+				function (lat) {
+					return elm$json$Json$Decode$succeed(
+						{lat: lat, lng: lng});
+				},
+				A2(elm$json$Json$Decode$field, 'lat', elm$json$Json$Decode$float));
+		},
+		A2(elm$json$Json$Decode$field, 'lng', elm$json$Json$Decode$float)));
+var author$project$Main$subscriptions = function (model) {
+	return author$project$Ports$receivePosition(author$project$Main$ReceivePosition);
+};
 var author$project$API$logOutRequest = function (token) {
 	return elm$http$Http$request(
 		{
@@ -7657,7 +7687,6 @@ var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var elm$core$Basics$not = _Basics_not;
 var elm$core$Debug$log = _Debug_log;
-var elm$core$Debug$toString = _Debug_toString;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -7852,28 +7881,18 @@ var author$project$Main$update = F2(
 					author$project$Ports$getPosition(_Utils_Tuple0));
 			default:
 				var position = msg.a;
-				return A2(
-					elm$core$Debug$log,
-					elm$core$Debug$toString(position.lat),
-					_Utils_Tuple2(model, elm$core$Platform$Cmd$none));
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							lastKnownLocation: elm$core$Maybe$Just(position)
+						}),
+					elm$core$Platform$Cmd$none);
 		}
 	});
 var elm$browser$Browser$application = _Browser_application;
-var elm$core$Basics$always = F2(
-	function (a, _n0) {
-		return a;
-	});
-var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var author$project$Main$main = elm$browser$Browser$application(
-	{
-		init: author$project$Main$init,
-		onUrlChange: author$project$Main$ChangeUrl,
-		onUrlRequest: author$project$Main$RequestUrl,
-		subscriptions: elm$core$Basics$always(elm$core$Platform$Sub$none),
-		update: author$project$Main$update,
-		view: author$project$Main$document
-	});
+	{init: author$project$Main$init, onUrlChange: author$project$Main$ChangeUrl, onUrlRequest: author$project$Main$RequestUrl, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$document});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	A2(
 		elm$json$Json$Decode$andThen,
