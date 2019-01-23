@@ -4477,6 +4477,7 @@ var author$project$Main$ChangeUrl = function (a) {
 var author$project$Main$RequestUrl = function (a) {
 	return {$: 'RequestUrl', a: a};
 };
+var author$project$Main$GetPosition = {$: 'GetPosition'};
 var author$project$Main$ToggleInfo = {$: 'ToggleInfo'};
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
@@ -5533,7 +5534,8 @@ var author$project$Main$renderAdventureMap = F5(
 								elm$html$Html$div,
 								_List_fromArray(
 									[
-										elm$html$Html$Attributes$class('section main button')
+										elm$html$Html$Attributes$class('section main button'),
+										elm$html$Html$Events$onClick(author$project$Main$GetPosition)
 									]),
 								_List_fromArray(
 									[
@@ -7494,6 +7496,11 @@ var author$project$Main$RedirectHome = function (a) {
 var author$project$Main$UpdateVisitResults = function (a) {
 	return {$: 'UpdateVisitResults', a: a};
 };
+var author$project$Ports$getPosition = _Platform_outgoingPort(
+	'getPosition',
+	function ($) {
+		return elm$json$Json$Encode$null;
+	});
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
 };
@@ -7650,6 +7657,7 @@ var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var elm$core$Basics$not = _Basics_not;
 var elm$core$Debug$log = _Debug_log;
+var elm$core$Debug$toString = _Debug_toString;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -7832,12 +7840,22 @@ var author$project$Main$update = F2(
 						model,
 						{cardDisplay: newCardDisplay}),
 					elm$core$Platform$Cmd$none);
-			default:
+			case 'ToggleInfo':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{infoToggle: !model.infoToggle}),
 					elm$core$Platform$Cmd$none);
+			case 'GetPosition':
+				return _Utils_Tuple2(
+					model,
+					author$project$Ports$getPosition(_Utils_Tuple0));
+			default:
+				var position = msg.a;
+				return A2(
+					elm$core$Debug$log,
+					elm$core$Debug$toString(position.lat),
+					_Utils_Tuple2(model, elm$core$Platform$Cmd$none));
 		}
 	});
 var elm$browser$Browser$application = _Browser_application;

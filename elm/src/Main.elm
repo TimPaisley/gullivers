@@ -86,6 +86,8 @@ type Msg
     | ChangeFilter Filter
     | ChangeSort Sort
     | ToggleInfo
+    | GetPosition
+    | ReceivePosition LatLng
 
 
 screenFromUrl : WebData (List Adventure) -> Url -> ( Screen, Cmd Msg )
@@ -270,6 +272,15 @@ update msg model =
 
         ToggleInfo ->
             ( { model | infoToggle = not model.infoToggle }, Cmd.none )
+
+        
+        GetPosition ->
+            ( model, Ports.getPosition ())
+
+
+        ReceivePosition position ->
+            Debug.log (Debug.toString position.lat)
+                <| ( model, Cmd.none )
 
 
 
@@ -565,7 +576,7 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 , infoBox
                 , div [ class "horizontal-bar bottom" ]
                     [ div [ class "section" ] [ previousLocation ]
-                    , div [ class "section main button" ]
+                    , div [ class "section main button", onClick GetPosition ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
                         , div [ class "subtitle" ]
