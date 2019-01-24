@@ -4477,7 +4477,7 @@ var author$project$Main$ChangeUrl = function (a) {
 var author$project$Main$RequestUrl = function (a) {
 	return {$: 'RequestUrl', a: a};
 };
-var author$project$Main$GetPosition = {$: 'GetPosition'};
+var author$project$Main$EnableGeolocation = {$: 'EnableGeolocation'};
 var author$project$Main$ToggleInfo = {$: 'ToggleInfo'};
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
@@ -5390,15 +5390,6 @@ var author$project$Main$renderAdventureMap = F5(
 					elm_community$list_extra$List$Extra$getAt,
 					locationIdx - 1,
 					mgold$elm_nonempty_list$List$Nonempty$toList(adventure.locations)));
-			var lastKnownLocation = function () {
-				var _n1 = model.lastKnownLocation;
-				if (_n1.$ === 'Just') {
-					var l = _n1.a;
-					return elm$core$String$fromFloat(l.lat) + (', ' + elm$core$String$fromFloat(l.lng));
-				} else {
-					return 'TAP TO ENABLE GPS';
-				}
-			}();
 			var infoToggleButton = A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -5505,6 +5496,21 @@ var author$project$Main$renderAdventureMap = F5(
 								A2(danmarcab$material_icons$Material$Icons$Social$share, avh4$elm_color$Color$darkGrey, 20)
 							]))
 					]));
+			var geoDataText = function () {
+				var _n1 = model.geoData;
+				switch (_n1.$) {
+					case 'NotAsked':
+						return 'TAP TO ENABLE GPS';
+					case 'Loading':
+						return 'Finding your location...';
+					case 'Failure':
+						var e = _n1.a;
+						return 'An error occurred.';
+					default:
+						var l = _n1.a;
+						return elm$core$String$fromFloat(l.lat) + (', ' + elm$core$String$fromFloat(l.lng));
+				}
+			}();
 			return A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -5544,7 +5550,7 @@ var author$project$Main$renderAdventureMap = F5(
 								_List_fromArray(
 									[
 										elm$html$Html$Attributes$class('section main button'),
-										elm$html$Html$Events$onClick(author$project$Main$GetPosition)
+										elm$html$Html$Events$onClick(author$project$Main$EnableGeolocation)
 									]),
 								_List_fromArray(
 									[
@@ -5574,7 +5580,7 @@ var author$project$Main$renderAdventureMap = F5(
 											]),
 										_List_fromArray(
 											[
-												elm$html$Html$text(lastKnownLocation)
+												elm$html$Html$text(geoDataText)
 											]))
 									])),
 								A2(
@@ -7297,6 +7303,7 @@ var author$project$Main$screenFromUrl = F2(
 			}
 		}
 	});
+var author$project$Types$NotAsked = {$: 'NotAsked'};
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$map = _Platform_map;
 var krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
@@ -7431,7 +7438,7 @@ var author$project$Main$init = F3(
 		var screen = _n0.a;
 		var cmd = _n0.b;
 		return _Utils_Tuple2(
-			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, infoToggle: false, key: key, lastKnownLocation: elm$core$Maybe$Nothing, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
+			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, geoData: author$project$Types$NotAsked, infoToggle: false, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
 			elm$core$Platform$Cmd$batch(
 				_List_fromArray(
 					[
@@ -7443,26 +7450,52 @@ var author$project$Main$init = F3(
 						cmd
 					])));
 	});
-var author$project$Main$ReceivePosition = function (a) {
-	return {$: 'ReceivePosition', a: a};
+var author$project$Main$ReceiveGeoData = function (a) {
+	return {$: 'ReceiveGeoData', a: a};
 };
+var author$project$Types$Failure = function (a) {
+	return {$: 'Failure', a: a};
+};
+var author$project$Ports$geoErrorDecoder = A2(elm$json$Json$Decode$map, author$project$Types$Failure, elm$json$Json$Decode$string);
+var author$project$Types$LatLng = F2(
+	function (lat, lng) {
+		return {lat: lat, lng: lng};
+	});
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
 var elm$json$Json$Decode$float = _Json_decodeFloat;
-var author$project$Ports$receivePosition = _Platform_incomingPort(
-	'receivePosition',
+var author$project$Ports$latLngDecoder = A3(
+	elm$json$Json$Decode$map2,
+	author$project$Types$LatLng,
 	A2(
-		elm$json$Json$Decode$andThen,
-		function (lng) {
-			return A2(
-				elm$json$Json$Decode$andThen,
-				function (lat) {
-					return elm$json$Json$Decode$succeed(
-						{lat: lat, lng: lng});
-				},
-				A2(elm$json$Json$Decode$field, 'lat', elm$json$Json$Decode$float));
-		},
-		A2(elm$json$Json$Decode$field, 'lng', elm$json$Json$Decode$float)));
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['coords', 'latitude']),
+		elm$json$Json$Decode$float),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['coords', 'longitude']),
+		elm$json$Json$Decode$float));
+var author$project$Types$Success = function (a) {
+	return {$: 'Success', a: a};
+};
+var author$project$Ports$geoSuccessDecoder = A2(elm$json$Json$Decode$map, author$project$Types$Success, author$project$Ports$latLngDecoder);
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
+var author$project$Ports$geoDecoder = elm$json$Json$Decode$oneOf(
+	_List_fromArray(
+		[author$project$Ports$geoSuccessDecoder, author$project$Ports$geoErrorDecoder]));
+var elm$json$Json$Decode$value = _Json_decodeValue;
+var author$project$Ports$receiveGeoData = _Platform_incomingPort('receiveGeoData', elm$json$Json$Decode$value);
+var elm$json$Json$Decode$decodeValue = _Json_run;
 var author$project$Main$subscriptions = function (model) {
-	return author$project$Ports$receivePosition(author$project$Main$ReceivePosition);
+	return author$project$Ports$receiveGeoData(
+		A2(
+			elm$core$Basics$composeL,
+			author$project$Main$ReceiveGeoData,
+			elm$json$Json$Decode$decodeValue(author$project$Ports$geoDecoder)));
 };
 var author$project$API$logOutRequest = function (token) {
 	return elm$http$Http$request(
@@ -7526,11 +7559,12 @@ var author$project$Main$RedirectHome = function (a) {
 var author$project$Main$UpdateVisitResults = function (a) {
 	return {$: 'UpdateVisitResults', a: a};
 };
-var author$project$Ports$getPosition = _Platform_outgoingPort(
-	'getPosition',
+var author$project$Ports$enableGeolocation = _Platform_outgoingPort(
+	'enableGeolocation',
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
+var author$project$Types$Loading = {$: 'Loading'};
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
 };
@@ -7686,7 +7720,6 @@ var elm$url$Url$fromString = function (str) {
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var elm$core$Basics$not = _Basics_not;
-var elm$core$Debug$log = _Debug_log;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
@@ -7770,7 +7803,6 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			case 'RequestUrl':
 				var urlRequest = msg.a;
-				var _n3 = A2(elm$core$Debug$log, 'Request URL', urlRequest);
 				if (urlRequest.$ === 'Internal') {
 					var url = urlRequest.a;
 					return _Utils_Tuple2(
@@ -7787,10 +7819,9 @@ var author$project$Main$update = F2(
 				}
 			case 'ChangeUrl':
 				var url = msg.a;
-				var _n5 = A2(author$project$Main$screenFromUrl, model.adventures, url);
-				var screen = _n5.a;
-				var cmd = _n5.b;
-				var _n6 = A2(elm$core$Debug$log, 'Change URL', url);
+				var _n4 = A2(author$project$Main$screenFromUrl, model.adventures, url);
+				var screen = _n4.a;
+				var cmd = _n4.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -7875,19 +7906,24 @@ var author$project$Main$update = F2(
 						model,
 						{infoToggle: !model.infoToggle}),
 					elm$core$Platform$Cmd$none);
-			case 'GetPosition':
-				return _Utils_Tuple2(
-					model,
-					author$project$Ports$getPosition(_Utils_Tuple0));
-			default:
-				var position = msg.a;
+			case 'EnableGeolocation':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{
-							lastKnownLocation: elm$core$Maybe$Just(position)
-						}),
-					elm$core$Platform$Cmd$none);
+						{geoData: author$project$Types$Loading}),
+					author$project$Ports$enableGeolocation(_Utils_Tuple0));
+			default:
+				if (msg.a.$ === 'Err') {
+					var error = msg.a.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				} else {
+					var newGeoData = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{geoData: newGeoData}),
+						elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var elm$browser$Browser$application = _Browser_application;

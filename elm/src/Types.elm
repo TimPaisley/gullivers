@@ -1,4 +1,4 @@
-module Types exposing (Adventure, AdventureCategory(..), CardDisplay, Filter(..), LatLng, Location, Screen(..), Sort(..), Toggle(..), Token, allFilters, allSorts, filterToString, sortToString)
+module Types exposing (Adventure, AdventureCategory(..), CardDisplay, Filter(..), GeoData(..), LatLng, Location, Screen(..), Sort(..), Toggle(..), Token, allFilters, allSorts, filterToString, sortToString)
 
 import List.Nonempty exposing (Nonempty)
 
@@ -96,6 +96,13 @@ type alias Location =
 
 type alias Token =
     String
+
+
+type GeoData
+    = NotAsked
+    | Loading
+    | Failure String
+    | Success LatLng
 
 
 type alias LatLng =

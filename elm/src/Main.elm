@@ -7,6 +7,7 @@ import Color exposing (Color)
 import Html exposing (Html, a, button, div, h1, h2, h3, img, li, p, small, span, text, ul)
 import Html.Attributes exposing (class, classList, href, id, src, style, target)
 import Html.Events exposing (onClick)
+import Json.Decode as Decode
 import List.Extra as ListX
 import List.Nonempty as Nonempty exposing (Nonempty)
 import Material.Icons.Action exposing (accessible, exit_to_app, feedback, home, subject)
@@ -15,7 +16,7 @@ import Material.Icons.Navigation exposing (chevron_left, chevron_right)
 import Material.Icons.Social exposing (share)
 import Ports
 import RemoteData exposing (RemoteData(..), WebData)
-import Types exposing (Adventure, AdventureCategory(..), CardDisplay, Filter(..), LatLng, Location, Screen(..), Sort(..), Toggle(..), Token, allFilters, allSorts, filterToString, sortToString)
+import Types exposing (Adventure, AdventureCategory(..), CardDisplay, Filter(..), GeoData, LatLng, Location, Screen(..), Sort(..), Toggle(..), Token, allFilters, allSorts, filterToString, sortToString)
 import Url exposing (Url)
 
 
@@ -31,7 +32,7 @@ type alias Model =
     , visitResult : WebData ()
     , cardDisplay : CardDisplay
     , infoToggle : Bool
-    , lastKnownLocation : Maybe LatLng
+    , geoData : GeoData
     }
 
 
@@ -43,7 +44,7 @@ init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     let
         ( screen, cmd ) =
-            screenFromUrl NotAsked url
+            screenFromUrl RemoteData.NotAsked url
 
         defaultCardDisplay =
             { toggle = Nothing
@@ -52,13 +53,13 @@ init flags url key =
             }
     in
     ( { flags = flags
-      , adventures = NotAsked
+      , adventures = RemoteData.NotAsked
       , screen = screen
       , key = key
-      , visitResult = NotAsked
+      , visitResult = RemoteData.NotAsked
       , cardDisplay = defaultCardDisplay
       , infoToggle = False
-      , lastKnownLocation = Nothing
+      , geoData = Types.NotAsked
       }
     , Cmd.batch
         [ API.adventuresRequest flags.token
@@ -88,8 +89,8 @@ type Msg
     | ChangeFilter Filter
     | ChangeSort Sort
     | ToggleInfo
-    | GetPosition
-    | ReceivePosition LatLng
+    | EnableGeolocation
+    | ReceiveGeoData (Result Decode.Error GeoData)
 
 
 screenFromUrl : WebData (List Adventure) -> Url -> ( Screen, Cmd Msg )
@@ -127,7 +128,7 @@ screenFromUrl remoteAdventures url =
 mapOptions : WebData (List Adventure) -> Int -> Int -> Maybe Ports.MapOptions
 mapOptions remoteAdventures id idx =
     case remoteAdventures of
-        Success adventures ->
+        RemoteData.Success adventures ->
             case ListX.find (\a -> a.id == id) adventures of
                 Just adventure ->
                     Just
@@ -148,7 +149,7 @@ mapOptions remoteAdventures id idx =
 locationLatLng : WebData (List Adventure) -> Int -> Int -> Maybe LatLng
 locationLatLng remoteAdventures id idx =
     case remoteAdventures of
-        Success adventures ->
+        RemoteData.Success adventures ->
             let
                 maybeAdventure =
                     ListX.find (\a -> a.id == id) adventures
@@ -190,10 +191,6 @@ update msg model =
             ( { model | screen = screen }, Cmd.none )
 
         RequestUrl urlRequest ->
-            let
-                _ =
-                    Debug.log "Request URL" urlRequest
-            in
             case urlRequest of
                 Browser.Internal url ->
                     ( model
@@ -207,9 +204,6 @@ update msg model =
 
         ChangeUrl url ->
             let
-                _ =
-                    Debug.log "Change URL" url
-
                 ( screen, cmd ) =
                     screenFromUrl model.adventures url
             in
@@ -275,11 +269,14 @@ update msg model =
         ToggleInfo ->
             ( { model | infoToggle = not model.infoToggle }, Cmd.none )
 
-        GetPosition ->
-            ( model, Ports.getPosition () )
+        EnableGeolocation ->
+            ( { model | geoData = Types.Loading }, Ports.enableGeolocation () )
 
-        ReceivePosition position ->
-            ( { model | lastKnownLocation = Just position }, Cmd.none )
+        ReceiveGeoData (Err error) ->
+            ( model, Cmd.none )
+
+        ReceiveGeoData (Ok newGeoData) ->
+            ( { model | geoData = newGeoData }, Cmd.none )
 
 
 
@@ -296,7 +293,7 @@ document model =
 view : Model -> Html Msg
 view model =
     case model.adventures of
-        Success adventures ->
+        RemoteData.Success adventures ->
             case model.screen of
                 Home ->
                     div [ id "wrapper" ]
@@ -305,7 +302,7 @@ view model =
                 AdventureMap id idx ->
                     renderAdventureMap model adventures id idx model.infoToggle
 
-        Failure _ ->
+        RemoteData.Failure _ ->
             div [ id "wrapper" ] [ text "Oops!" ]
 
         _ ->
@@ -568,13 +565,19 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 indicatorFor l =
                     div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
 
-                lastKnownLocation =
-                    case model.lastKnownLocation of
-                        Just l ->
-                            String.fromFloat l.lat ++ ", " ++ String.fromFloat l.lng
-
-                        Nothing ->
+                geoDataText =
+                    case model.geoData of
+                        Types.NotAsked ->
                             "TAP TO ENABLE GPS"
+
+                        Types.Loading ->
+                            "Finding your location..."
+
+                        Types.Failure e ->
+                            "An error occurred."
+
+                        Types.Success l ->
+                            String.fromFloat l.lat ++ ", " ++ String.fromFloat l.lng
             in
             div [ id "adventure-map-screen" ]
                 [ div [ id "map" ] []
@@ -583,10 +586,10 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 , infoBox
                 , div [ class "horizontal-bar bottom" ]
                     [ div [ class "section" ] [ previousLocation ]
-                    , div [ class "section main button", onClick GetPosition ]
+                    , div [ class "section main button", onClick EnableGeolocation ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
-                        , div [ class "subtitle" ] [ text lastKnownLocation ]
+                        , div [ class "subtitle" ] [ text geoDataText ]
                         ]
                     , div [ class "section" ] [ nextLocation ]
                     ]
@@ -618,4 +621,4 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Ports.receivePosition ReceivePosition
+    Ports.receiveGeoData (ReceiveGeoData << Decode.decodeValue Ports.geoDecoder)

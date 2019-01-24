@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     function geo_success(position) {
-        window.app.ports.receivePosition.send({ lat: position.coords.latitude, lng: position.coords.longitude });
+        window.app.ports.receiveGeoData.send(position);
     }
 
     function geo_error(error) {
-        console.log (error);
+        window.app.ports.receiveGeoData.send(error.message);
     }
 
     var geo_options = {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         timeout           : 27000
     };
 
-    window.app.ports.getPosition.subscribe(function () {
-        navigator.geolocation.getCurrentPosition(geo_success, geo_error, geo_options);
+    window.app.ports.enableGeolocation.subscribe(function () {
+        navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
     });
 });
