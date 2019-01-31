@@ -112,10 +112,18 @@ screenFromUrl remoteAdventures geodata url =
                 ( Just id, Just idx ) ->
                     let
                         focus =
-                            locationLatLng remoteAdventures id idx
+                            case locationLatLng remoteAdventures id idx of
+                                Just latlng ->
+                                    Ports.focusMap latlng
+
+                                Nothing ->
+                                    Cmd.none
                     in
                     ( AdventureMap id idx
-                    , Ports.updateMap (mapOptions remoteAdventures geodata id idx)
+                    , Cmd.batch
+                        [ Ports.updateMap (mapOptions remoteAdventures geodata id idx)
+                        , focus
+                        ]
                     )
 
                 _ ->
@@ -142,8 +150,8 @@ mapOptions remoteAdventures geodata id idx =
                     in
                     Just
                         { elementID = "map"
-                        , focus = locationLatLng remoteAdventures id idx
                         , position = position
+                        , initialFocus = locationLatLng remoteAdventures id idx
                         , locations =
                             Nonempty.toList <|
                                 Nonempty.map .latLng adventure.locations
@@ -234,7 +242,7 @@ update msg model =
                 url =
                     "/adventures/" ++ String.fromInt id ++ "/locations/1"
             in
-            ( model, Cmd.batch [ Nav.pushUrl model.key url ] )
+            ( model, Nav.pushUrl model.key url )
 
         LogOut ->
             ( model

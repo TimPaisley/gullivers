@@ -1,4 +1,4 @@
-port module Ports exposing (MapOptions, enableGeolocation, geoDecoder, receiveGeoData, updateMap)
+port module Ports exposing (MapOptions, enableGeolocation, focusMap, geoDecoder, receiveGeoData, updateMap)
 
 import Json.Decode as Decode exposing (Decoder, Value)
 import Types exposing (GeoData(..), LatLng)
@@ -6,10 +6,13 @@ import Types exposing (GeoData(..), LatLng)
 
 type alias MapOptions =
     { elementID : String
-    , focus : Maybe LatLng
     , position : Maybe LatLng
+    , initialFocus : Maybe LatLng
     , locations : List LatLng
     }
+
+
+port focusMap : LatLng -> Cmd msg
 
 
 port updateMap : Maybe MapOptions -> Cmd msg

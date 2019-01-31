@@ -7157,7 +7157,7 @@ var author$project$Main$mapOptions = F4(
 				return elm$core$Maybe$Just(
 					{
 						elementID: 'map',
-						focus: A3(author$project$Main$locationLatLng, remoteAdventures, id, idx),
+						initialFocus: A3(author$project$Main$locationLatLng, remoteAdventures, id, idx),
 						locations: mgold$elm_nonempty_list$List$Nonempty$toList(
 							A2(
 								mgold$elm_nonempty_list$List$Nonempty$map,
@@ -7174,26 +7174,7 @@ var author$project$Main$mapOptions = F4(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var elm$core$Maybe$destruct = F3(
-	function (_default, func, maybe) {
-		if (maybe.$ === 'Just') {
-			var a = maybe.a;
-			return func(a);
-		} else {
-			return _default;
-		}
-	});
 var elm$json$Json$Encode$float = _Json_wrap;
-var elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(_Utils_Tuple0),
-				entries));
-	});
-var elm$json$Json$Encode$null = _Json_encodeNull;
 var elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -7207,6 +7188,39 @@ var elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
+var author$project$Ports$focusMap = _Platform_outgoingPort(
+	'focusMap',
+	function ($) {
+		return elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'lat',
+					elm$json$Json$Encode$float($.lat)),
+					_Utils_Tuple2(
+					'lng',
+					elm$json$Json$Encode$float($.lng))
+				]));
+	});
+var elm$core$Maybe$destruct = F3(
+	function (_default, func, maybe) {
+		if (maybe.$ === 'Just') {
+			var a = maybe.a;
+			return func(a);
+		} else {
+			return _default;
+		}
+	});
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
+var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$Ports$updateMap = _Platform_outgoingPort(
 	'updateMap',
 	function ($) {
@@ -7221,7 +7235,7 @@ var author$project$Ports$updateMap = _Platform_outgoingPort(
 							'elementID',
 							elm$json$Json$Encode$string($.elementID)),
 							_Utils_Tuple2(
-							'focus',
+							'initialFocus',
 							function ($) {
 								return A3(
 									elm$core$Maybe$destruct,
@@ -7239,7 +7253,7 @@ var author$project$Ports$updateMap = _Platform_outgoingPort(
 												]));
 									},
 									$);
-							}($.focus)),
+							}($.initialFocus)),
 							_Utils_Tuple2(
 							'locations',
 							elm$json$Json$Encode$list(
@@ -7288,6 +7302,8 @@ var elm$core$Basics$negate = function (n) {
 	return -n;
 };
 var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$Platform$Cmd$batch = _Platform_batch;
+var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$core$String$toInt = _String_toInt;
 var author$project$Main$screenFromUrl = F3(
 	function (remoteAdventures, geodata, url) {
@@ -7315,11 +7331,24 @@ var author$project$Main$screenFromUrl = F3(
 				if ((_n4.a.$ === 'Just') && (_n4.b.$ === 'Just')) {
 					var id = _n4.a.a;
 					var idx = _n4.b.a;
-					var focus = A3(author$project$Main$locationLatLng, remoteAdventures, id, idx);
+					var focus = function () {
+						var _n5 = A3(author$project$Main$locationLatLng, remoteAdventures, id, idx);
+						if (_n5.$ === 'Just') {
+							var latlng = _n5.a;
+							return author$project$Ports$focusMap(latlng);
+						} else {
+							return elm$core$Platform$Cmd$none;
+						}
+					}();
 					return _Utils_Tuple2(
 						A2(author$project$Types$AdventureMap, id, idx),
-						author$project$Ports$updateMap(
-							A4(author$project$Main$mapOptions, remoteAdventures, geodata, id, idx)));
+						elm$core$Platform$Cmd$batch(
+							_List_fromArray(
+								[
+									author$project$Ports$updateMap(
+									A4(author$project$Main$mapOptions, remoteAdventures, geodata, id, idx)),
+									focus
+								])));
 				} else {
 					return _Utils_Tuple2(
 						author$project$Types$Home,
@@ -7333,7 +7362,6 @@ var author$project$Main$screenFromUrl = F3(
 		}
 	});
 var author$project$Types$NotAsked = {$: 'NotAsked'};
-var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$map = _Platform_map;
 var krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var elm$core$Basics$composeL = F3(
@@ -7749,7 +7777,6 @@ var elm$url$Url$fromString = function (str) {
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var elm$core$Basics$not = _Basics_not;
-var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -7877,11 +7904,7 @@ var author$project$Main$update = F2(
 				var url = '/adventures/' + (elm$core$String$fromInt(id) + '/locations/1');
 				return _Utils_Tuple2(
 					model,
-					elm$core$Platform$Cmd$batch(
-						_List_fromArray(
-							[
-								A2(elm$browser$Browser$Navigation$pushUrl, model.key, url)
-							])));
+					A2(elm$browser$Browser$Navigation$pushUrl, model.key, url));
 			case 'LogOut':
 				return _Utils_Tuple2(
 					model,

@@ -32,14 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var pos;
 
     window.app.ports.updateMap.subscribe(function (options) {
-        console.log(map, options);
         if (options) {
             if (!map) {
                 var stopObserving = onElementCreate('map', function () {
                     map = new mapboxgl.Map({
                         container: 'map',
                         style: mapStyle,
-                        center: options.focus,
+                        center: options.initialFocus,
                         zoom: 13
                     });
 
@@ -54,9 +53,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     stopObserving();
                 });
             } else {
-                console.log(options.focus);
-                map.panTo(options.focus);
-
                 if (options.position) {
                     if (pos) { pos.remove(); }
 
@@ -72,6 +68,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 map = null;
                 pos = null;
             }
+        }
+    });
+
+    window.app.ports.focusMap.subscribe(function (position) {
+        if (map) {
+            map.panTo(position);
         }
     });
 });
