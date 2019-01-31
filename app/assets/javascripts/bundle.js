@@ -7134,8 +7134,8 @@ var author$project$Main$locationLatLng = F3(
 			return elm$core$Maybe$Nothing;
 		}
 	});
-var author$project$Main$mapOptions = F3(
-	function (remoteAdventures, id, idx) {
+var author$project$Main$mapOptions = F4(
+	function (remoteAdventures, geodata, id, idx) {
 		if (remoteAdventures.$ === 'Success') {
 			var adventures = remoteAdventures.a;
 			var _n1 = A2(
@@ -7146,6 +7146,14 @@ var author$project$Main$mapOptions = F3(
 				adventures);
 			if (_n1.$ === 'Just') {
 				var adventure = _n1.a;
+				var position = function () {
+					if (geodata.$ === 'Success') {
+						var latlng = geodata.a;
+						return elm$core$Maybe$Just(latlng);
+					} else {
+						return elm$core$Maybe$Nothing;
+					}
+				}();
 				return elm$core$Maybe$Just(
 					{
 						elementID: 'map',
@@ -7156,7 +7164,8 @@ var author$project$Main$mapOptions = F3(
 								function ($) {
 									return $.latLng;
 								},
-								adventure.locations))
+								adventure.locations)),
+						position: position
 					});
 			} else {
 				return elm$core$Maybe$Nothing;
@@ -7245,7 +7254,27 @@ var author$project$Ports$updateMap = _Platform_outgoingPort(
 												'lng',
 												elm$json$Json$Encode$float($.lng))
 											]));
-								})($.locations))
+								})($.locations)),
+							_Utils_Tuple2(
+							'position',
+							function ($) {
+								return A3(
+									elm$core$Maybe$destruct,
+									elm$json$Json$Encode$null,
+									function ($) {
+										return elm$json$Json$Encode$object(
+											_List_fromArray(
+												[
+													_Utils_Tuple2(
+													'lat',
+													elm$json$Json$Encode$float($.lat)),
+													_Utils_Tuple2(
+													'lng',
+													elm$json$Json$Encode$float($.lng))
+												]));
+									},
+									$);
+							}($.position))
 						]));
 			},
 			$);
@@ -7260,8 +7289,8 @@ var elm$core$Basics$negate = function (n) {
 };
 var elm$core$Basics$neq = _Utils_notEqual;
 var elm$core$String$toInt = _String_toInt;
-var author$project$Main$screenFromUrl = F2(
-	function (remoteAdventures, url) {
+var author$project$Main$screenFromUrl = F3(
+	function (remoteAdventures, geodata, url) {
 		var segments = A2(
 			elm$core$List$filter,
 			function (s) {
@@ -7290,7 +7319,7 @@ var author$project$Main$screenFromUrl = F2(
 					return _Utils_Tuple2(
 						A2(author$project$Types$AdventureMap, id, idx),
 						author$project$Ports$updateMap(
-							A3(author$project$Main$mapOptions, remoteAdventures, id, idx)));
+							A4(author$project$Main$mapOptions, remoteAdventures, geodata, id, idx)));
 				} else {
 					return _Utils_Tuple2(
 						author$project$Types$Home,
@@ -7434,7 +7463,7 @@ var krisajenkins$remotedata$RemoteData$sendRequest = elm$http$Http$send(krisajen
 var author$project$Main$init = F3(
 	function (flags, url, key) {
 		var defaultCardDisplay = {filter: author$project$Types$All, sort: author$project$Types$Name, toggle: elm$core$Maybe$Nothing};
-		var _n0 = A2(author$project$Main$screenFromUrl, krisajenkins$remotedata$RemoteData$NotAsked, url);
+		var _n0 = A3(author$project$Main$screenFromUrl, krisajenkins$remotedata$RemoteData$NotAsked, author$project$Types$NotAsked, url);
 		var screen = _n0.a;
 		var cmd = _n0.b;
 		return _Utils_Tuple2(
@@ -7781,7 +7810,7 @@ var author$project$Main$update = F2(
 						if (_n2.$ === 'Just') {
 							var latlng = _n2.a;
 							return author$project$Ports$updateMap(
-								A3(author$project$Main$mapOptions, remoteAdventures, id, idx));
+								A4(author$project$Main$mapOptions, remoteAdventures, model.geoData, id, idx));
 						} else {
 							return elm$core$Platform$Cmd$none;
 						}
@@ -7819,7 +7848,7 @@ var author$project$Main$update = F2(
 				}
 			case 'ChangeUrl':
 				var url = msg.a;
-				var _n4 = A2(author$project$Main$screenFromUrl, model.adventures, url);
+				var _n4 = A3(author$project$Main$screenFromUrl, model.adventures, model.geoData, url);
 				var screen = _n4.a;
 				var cmd = _n4.b;
 				return _Utils_Tuple2(
@@ -7918,11 +7947,28 @@ var author$project$Main$update = F2(
 					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 				} else {
 					var newGeoData = msg.a.a;
+					var cmd = function () {
+						var _n5 = model.screen;
+						if (_n5.$ === 'AdventureMap') {
+							var id = _n5.a;
+							var idx = _n5.b;
+							var _n6 = A3(author$project$Main$locationLatLng, model.adventures, id, idx);
+							if (_n6.$ === 'Just') {
+								var latlng = _n6.a;
+								return author$project$Ports$updateMap(
+									A4(author$project$Main$mapOptions, model.adventures, newGeoData, id, idx));
+							} else {
+								return elm$core$Platform$Cmd$none;
+							}
+						} else {
+							return elm$core$Platform$Cmd$none;
+						}
+					}();
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{geoData: newGeoData}),
-						elm$core$Platform$Cmd$none);
+						cmd);
 				}
 		}
 	});

@@ -44,7 +44,7 @@ init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     let
         ( screen, cmd ) =
-            screenFromUrl RemoteData.NotAsked url
+            screenFromUrl RemoteData.NotAsked Types.NotAsked url
 
         defaultCardDisplay =
             { toggle = Nothing
@@ -93,8 +93,8 @@ type Msg
     | ReceiveGeoData (Result Decode.Error GeoData)
 
 
-screenFromUrl : WebData (List Adventure) -> Url -> ( Screen, Cmd Msg )
-screenFromUrl remoteAdventures url =
+screenFromUrl : WebData (List Adventure) -> GeoData -> Url -> ( Screen, Cmd Msg )
+screenFromUrl remoteAdventures geodata url =
     let
         segments =
             String.split "/" url.path
@@ -115,7 +115,7 @@ screenFromUrl remoteAdventures url =
                             locationLatLng remoteAdventures id idx
                     in
                     ( AdventureMap id idx
-                    , Ports.updateMap (mapOptions remoteAdventures id idx)
+                    , Ports.updateMap (mapOptions remoteAdventures geodata id idx)
                     )
 
                 _ ->
@@ -125,15 +125,25 @@ screenFromUrl remoteAdventures url =
             ( Home, Ports.updateMap Nothing )
 
 
-mapOptions : WebData (List Adventure) -> Int -> Int -> Maybe Ports.MapOptions
-mapOptions remoteAdventures id idx =
+mapOptions : WebData (List Adventure) -> GeoData -> Int -> Int -> Maybe Ports.MapOptions
+mapOptions remoteAdventures geodata id idx =
     case remoteAdventures of
         RemoteData.Success adventures ->
             case ListX.find (\a -> a.id == id) adventures of
                 Just adventure ->
+                    let
+                        position =
+                            case geodata of
+                                Types.Success latlng ->
+                                    Just latlng
+
+                                _ ->
+                                    Nothing
+                    in
                     Just
                         { elementID = "map"
                         , focus = locationLatLng remoteAdventures id idx
+                        , position = position
                         , locations =
                             Nonempty.toList <|
                                 Nonempty.map .latLng adventure.locations
@@ -177,7 +187,7 @@ update msg model =
                         AdventureMap id idx ->
                             case locationLatLng remoteAdventures id idx of
                                 Just latlng ->
-                                    Ports.updateMap (mapOptions remoteAdventures id idx)
+                                    Ports.updateMap (mapOptions remoteAdventures model.geoData id idx)
 
                                 _ ->
                                     Cmd.none
@@ -205,7 +215,7 @@ update msg model =
         ChangeUrl url ->
             let
                 ( screen, cmd ) =
-                    screenFromUrl model.adventures url
+                    screenFromUrl model.adventures model.geoData url
             in
             ( { model | screen = screen }, cmd )
 
@@ -276,7 +286,22 @@ update msg model =
             ( model, Cmd.none )
 
         ReceiveGeoData (Ok newGeoData) ->
-            ( { model | geoData = newGeoData }, Cmd.none )
+            let
+                cmd =
+                    case model.screen of
+                        AdventureMap id idx ->
+                            case locationLatLng model.adventures id idx of
+                                Just latlng ->
+                                    Ports.updateMap
+                                        (mapOptions model.adventures newGeoData id idx)
+
+                                _ ->
+                                    Cmd.none
+
+                        _ ->
+                            Cmd.none
+            in
+            ( { model | geoData = newGeoData }, cmd )
 
 
 

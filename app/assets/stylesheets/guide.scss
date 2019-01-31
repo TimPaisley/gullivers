@@ -329,6 +329,7 @@ svg {
         z-index: 100;
         padding: 10px;
         background-color: white;
+        user-select: none;
         
         &.top {
             top: 0;

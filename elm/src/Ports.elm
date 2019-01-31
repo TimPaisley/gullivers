@@ -7,6 +7,7 @@ import Types exposing (GeoData(..), LatLng)
 type alias MapOptions =
     { elementID : String
     , focus : Maybe LatLng
+    , position : Maybe LatLng
     , locations : List LatLng
     }
 

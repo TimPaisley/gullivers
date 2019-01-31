@@ -8,9 +8,9 @@ var markerColor = '#769e8a';
 function onElementCreate(id, callback) {
     if (document.getElementById(id)) {
         requestAnimationFrame(callback);
-        return function () {};
+        return function () { };
     }
-    
+
     var observer = new MutationObserver(function (mutations) {
         if (document.getElementById(id)) {
             callback();
@@ -29,12 +29,13 @@ function onElementCreate(id, callback) {
 
 document.addEventListener('DOMContentLoaded', function () {
     var map;
+    var pos;
 
     window.app.ports.updateMap.subscribe(function (options) {
-        console.log (map, options);
+        console.log(map, options);
         if (options) {
             if (!map) {
-                var stopObserving = onElementCreate('map', function() {
+                var stopObserving = onElementCreate('map', function () {
                     map = new mapboxgl.Map({
                         container: 'map',
                         style: mapStyle,
@@ -53,14 +54,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     stopObserving();
                 });
             } else {
+                console.log(options.focus);
                 map.panTo(options.focus);
+
+                if (options.position) {
+                    if (pos) { pos.remove(); }
+
+                    pos = new mapboxgl.Marker({ color: '#FFCC00' })
+                        .setLngLat([options.position.lng, options.position.lat])
+                        .addTo(map);
+                }
             }
-                    
+
         } else {
             if (map) {
-                console.log('removing map!')
                 map.remove();
                 map = null;
+                pos = null;
             }
         }
     });
