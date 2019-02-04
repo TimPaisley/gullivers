@@ -29,7 +29,6 @@ type alias Model =
     , adventures : WebData (List Adventure)
     , screen : Screen
     , key : Nav.Key
-    , visitResult : WebData ()
     , cardDisplay : CardDisplay
     , infoToggle : Bool
     , geoData : GeoData
@@ -56,7 +55,6 @@ init flags url key =
       , adventures = RemoteData.NotAsked
       , screen = screen
       , key = key
-      , visitResult = RemoteData.NotAsked
       , cardDisplay = defaultCardDisplay
       , infoToggle = False
       , geoData = Types.NotAsked
@@ -235,7 +233,11 @@ update msg model =
             )
 
         UpdateVisitResults result ->
-            ( { model | visitResult = result }, Cmd.none )
+            let
+                _ =
+                    Debug.log "Visited: " result
+            in
+            ( model, Cmd.none )
 
         ViewAdventureMap id ->
             let
@@ -598,19 +600,33 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 indicatorFor l =
                     div [ class "indicator", classList [ ( "active", l.id == locationIdx ) ] ] []
 
-                geoDataText =
+                geoMsg =
                     case model.geoData of
                         Types.NotAsked ->
-                            "TAP TO ENABLE GPS"
+                            EnableGeolocation
+
+                        Types.Loading ->
+                            NoOp
+
+                        Types.Failure _ ->
+                            EnableGeolocation
+
+                        Types.Success _ ->
+                            VisitLocation location
+
+                geoText =
+                    case model.geoData of
+                        Types.NotAsked ->
+                            "Tap to enable GPS"
 
                         Types.Loading ->
                             "Finding your location..."
 
                         Types.Failure e ->
-                            "An error occurred."
+                            "An error occurred, try again?"
 
                         Types.Success l ->
-                            String.fromFloat l.lat ++ ", " ++ String.fromFloat l.lng
+                            "Tap to discover this location!"
             in
             div [ id "adventure-map-screen" ]
                 [ div [ id "map" ] []
@@ -619,10 +635,10 @@ renderAdventureMap model adventures adventureId locationIdx infoToggle =
                 , infoBox
                 , div [ class "horizontal-bar bottom" ]
                     [ div [ class "section" ] [ previousLocation ]
-                    , div [ class "section main button", onClick EnableGeolocation ]
+                    , div [ class "section main button", onClick geoMsg ]
                         [ div [ class "indicators" ] (Nonempty.map indicatorFor adventure.locations |> Nonempty.toList)
                         , div [ class "title" ] [ text location.name ]
-                        , div [ class "subtitle" ] [ text geoDataText ]
+                        , div [ class "subtitle" ] [ text geoText ]
                         ]
                     , div [ class "section" ] [ nextLocation ]
                     ]

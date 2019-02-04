@@ -4478,7 +4478,11 @@ var author$project$Main$RequestUrl = function (a) {
 	return {$: 'RequestUrl', a: a};
 };
 var author$project$Main$EnableGeolocation = {$: 'EnableGeolocation'};
+var author$project$Main$NoOp = {$: 'NoOp'};
 var author$project$Main$ToggleInfo = {$: 'ToggleInfo'};
+var author$project$Main$VisitLocation = function (a) {
+	return {$: 'VisitLocation', a: a};
+};
 var avh4$elm_color$Color$RgbaSpace = F4(
 	function (a, b, c, d) {
 		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
@@ -5496,19 +5500,32 @@ var author$project$Main$renderAdventureMap = F5(
 								A2(danmarcab$material_icons$Material$Icons$Social$share, avh4$elm_color$Color$darkGrey, 20)
 							]))
 					]));
-			var geoDataText = function () {
-				var _n1 = model.geoData;
-				switch (_n1.$) {
+			var geoText = function () {
+				var _n2 = model.geoData;
+				switch (_n2.$) {
 					case 'NotAsked':
-						return 'TAP TO ENABLE GPS';
+						return 'Tap to enable GPS';
 					case 'Loading':
 						return 'Finding your location...';
 					case 'Failure':
-						var e = _n1.a;
-						return 'An error occurred.';
+						var e = _n2.a;
+						return 'An error occurred, try again?';
 					default:
-						var l = _n1.a;
-						return elm$core$String$fromFloat(l.lat) + (', ' + elm$core$String$fromFloat(l.lng));
+						var l = _n2.a;
+						return 'Tap to discover this location!';
+				}
+			}();
+			var geoMsg = function () {
+				var _n1 = model.geoData;
+				switch (_n1.$) {
+					case 'NotAsked':
+						return author$project$Main$EnableGeolocation;
+					case 'Loading':
+						return author$project$Main$NoOp;
+					case 'Failure':
+						return author$project$Main$EnableGeolocation;
+					default:
+						return author$project$Main$VisitLocation(location);
 				}
 			}();
 			return A2(
@@ -5550,7 +5567,7 @@ var author$project$Main$renderAdventureMap = F5(
 								_List_fromArray(
 									[
 										elm$html$Html$Attributes$class('section main button'),
-										elm$html$Html$Events$onClick(author$project$Main$EnableGeolocation)
+										elm$html$Html$Events$onClick(geoMsg)
 									]),
 								_List_fromArray(
 									[
@@ -5580,7 +5597,7 @@ var author$project$Main$renderAdventureMap = F5(
 											]),
 										_List_fromArray(
 											[
-												elm$html$Html$text(geoDataText)
+												elm$html$Html$text(geoText)
 											]))
 									])),
 								A2(
@@ -5606,7 +5623,6 @@ var author$project$Main$ChangeSort = function (a) {
 var author$project$Main$ChangeToggle = function (a) {
 	return {$: 'ChangeToggle', a: a};
 };
-var author$project$Main$NoOp = {$: 'NoOp'};
 var author$project$Main$ViewAdventureMap = function (a) {
 	return {$: 'ViewAdventureMap', a: a};
 };
@@ -7495,7 +7511,7 @@ var author$project$Main$init = F3(
 		var screen = _n0.a;
 		var cmd = _n0.b;
 		return _Utils_Tuple2(
-			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, geoData: author$project$Types$NotAsked, infoToggle: false, key: key, screen: screen, visitResult: krisajenkins$remotedata$RemoteData$NotAsked},
+			{adventures: krisajenkins$remotedata$RemoteData$NotAsked, cardDisplay: defaultCardDisplay, flags: flags, geoData: author$project$Types$NotAsked, infoToggle: false, key: key, screen: screen},
 			elm$core$Platform$Cmd$batch(
 				_List_fromArray(
 					[
@@ -7777,6 +7793,7 @@ var elm$url$Url$fromString = function (str) {
 var elm$browser$Browser$Navigation$load = _Browser_load;
 var elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
 var elm$core$Basics$not = _Basics_not;
+var elm$core$Debug$log = _Debug_log;
 var elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -7894,11 +7911,8 @@ var author$project$Main$update = F2(
 							A2(author$project$API$visitLocationRequest, model.flags.token, location))));
 			case 'UpdateVisitResults':
 				var result = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{visitResult: result}),
-					elm$core$Platform$Cmd$none);
+				var _n5 = A2(elm$core$Debug$log, 'Visited: ', result);
+				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'ViewAdventureMap':
 				var id = msg.a;
 				var url = '/adventures/' + (elm$core$String$fromInt(id) + '/locations/1');
@@ -7971,13 +7985,13 @@ var author$project$Main$update = F2(
 				} else {
 					var newGeoData = msg.a.a;
 					var cmd = function () {
-						var _n5 = model.screen;
-						if (_n5.$ === 'AdventureMap') {
-							var id = _n5.a;
-							var idx = _n5.b;
-							var _n6 = A3(author$project$Main$locationLatLng, model.adventures, id, idx);
-							if (_n6.$ === 'Just') {
-								var latlng = _n6.a;
+						var _n6 = model.screen;
+						if (_n6.$ === 'AdventureMap') {
+							var id = _n6.a;
+							var idx = _n6.b;
+							var _n7 = A3(author$project$Main$locationLatLng, model.adventures, id, idx);
+							if (_n7.$ === 'Just') {
+								var latlng = _n7.a;
 								return author$project$Ports$updateMap(
 									A4(author$project$Main$mapOptions, model.adventures, newGeoData, id, idx));
 							} else {
